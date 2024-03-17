@@ -1,11 +1,11 @@
 import express from "express";
-import dotenv from "dotenv";
+import path from "path";
 
-dotenv.config();
 const app = express();
+const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
-app.get("/", (req, res) => {
-  res.send("");
-});
+app
+  .use(express.static(path.join(__dirname, "dist")))
+  .use(express.json());
 
 app.listen(process.env.PORT);

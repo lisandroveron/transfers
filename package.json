@@ -4,14 +4,16 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "dev": "nodemon --experimental-modules server.js",
+    "dev": "dotenvx run -- nodemon --experimental-modules server.js -e js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "lisandroveron",
   "license": "GPL-2.0",
   "dependencies": {
-    "dotenv": "^16.4.5",
     "express": "^4.18.3"
   },
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "@dotenvx/dotenvx": "^0.25.0"
+  }
 }
