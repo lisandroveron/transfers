@@ -1,8 +1,9 @@
 import express from "express";
 import path from "path";
+import {sequelize, User} from "./sequelize/init.js";
 
-const app = express();
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
+const app = express();
 
 app
   .use(express.static(path.join(__dirname, "dist")))
