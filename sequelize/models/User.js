@@ -5,7 +5,7 @@ class User extends Model {};
 
 User.init({
   // Attributes
-  name: {
+  firstname: {
     type: DataTypes.STRING(64),
     allowNull: false
   },
