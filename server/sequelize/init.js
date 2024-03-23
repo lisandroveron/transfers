@@ -1,5 +1,5 @@
 import sequelize from "./config.js";
-import User from "./models/Users.js";
+import User from "./models/User.js";
 
 (async () => {
   try {
