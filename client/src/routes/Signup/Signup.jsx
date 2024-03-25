@@ -13,6 +13,18 @@ export default function Signup() {
     setFirstname(firstname.trim().replace(/\s+/g, " "));
     setLastname(lastname.trim().replace(/\s+/g, " "));
     setEmail(email.trim().replace(/\s+/g, " "));
+    setPassword(password.trim());
+
+    fetch("/api/auth/signup", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        firstname: firstname,
+        lastname: lastname,
+        email: email,
+        password: password
+      })
+    });
   };
 
   return (<>
@@ -21,30 +33,38 @@ export default function Signup() {
       <input
           id="signup__firstname"
           type="text"
-          value={firstname}
           pattern="[a-zA-ZáéíóúÁÉÍÓÚñ ]+"
+          minLength="2"
+          maxLength="64"
+          value={firstname}
           required
           onChange={(e) => setFirstname(e.target.value)} />
       <label htmlFor="signup__lastname">Apellidos</label>
       <input
           id="signup__lastname"
           type="text"
-          value={lastname}
           pattern="[a-zA-ZáéíóúÁÉÍÓÚñ ]+"
+          minLength="2"
+          maxLength="64"
+          value={lastname}
           required
           onChange={(e) => setLastname(e.target.value)} />
       <label htmlFor="signup__email">Correo electrónico</label>
       <input
           id="signup__email"
           type="email"
+          pattern="[a-zA-Z0-9.]+@(hotmail|outlook|live|gmail).com(.ar)?"
+          minLength="10"
+          maxLength="64"
           value={email}
-          pattern="[a-zA-Z0-9.]+@(hotmail|outlook|gmail).com(.ar)?"
           required
           onChange={(e) => setEmail(e.target.value)} />
       <label htmlFor="signup__password">Contraseña</label>
       <input
           id="signup__password"
           type="password"
+          minLength="8"
+          maxLength="255"
           value={password}
           required
           onChange={(e) => setPassword(e.target.value)} />
