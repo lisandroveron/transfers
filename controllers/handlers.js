@@ -12,7 +12,7 @@ export async function signup(req, res) {
     });
   } catch (error) {
     if (error instanceof Sequelize.ValidationError) {
-      res.status(400).send(msg[400].invalidData);
+      return res.status(400).send(msg[400].invalidData);
     };
   };
 
