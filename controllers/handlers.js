@@ -11,14 +11,30 @@ export async function signup(req, res) {
       defaults: req.body
     });
   } catch (error) {
+    console.error("ERROR", error);
     if (error instanceof Sequelize.ValidationError) {
       return res.status(400).send(msg[400].invalidData);
     };
   };
 
-  if (!created) {
+  if (!user) {
     res.status(400).send(msg[400].userAlreadyExists);
   } else {
-    res.status(200).send();
+    res.status(200).send(msg[200].successfulRegistered);
   };
+};
+
+export async function login(req, res) {
+  const {email, password} = req.body;
+
+  const user = await User.findOne({where: {email: email}});
+
+  if (!user || !user.authenticate(password)) {
+    return res.status(400).send(msg[400].invalidLogin);
+  };
+
+  res.status(200).send(JSON.stringify({
+    firstname: user.firstname,
+    lastname: user.lastname,
+  }));
 };
