@@ -28,13 +28,18 @@ export default function Signup() {
         password: password
       })
     })
-      .then(response => {
-        if (response.ok) {
+      .then(async response => {
+        return {
+          authenticated: response.ok,
+          msg: await response.text()
+        };
+      })
+      .then(({authenticated, msg}) => {
+        if (authenticated) {
+          alert(msg);
           navigate("/account/login");
         };
-        return response.text();
-      })
-      .then(msg => alert(msg));
+      });
   };
 
   return (<>
