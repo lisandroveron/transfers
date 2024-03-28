@@ -1,8 +1,14 @@
+import {randomBytes} from "crypto";
 import {DataTypes, Model} from "sequelize";
 import sequelize from "../config.js";
-import {createHash, randomBytes} from "crypto";
+import {encryptPassword} from "../../utils.js";
 
-class User extends Model {};
+class User extends Model {
+  authenticate(password) {
+    const [encryptedPassword] = encryptPassword(password, this.salt);
+    return this.password === encryptedPassword;
+  };
+};
 
 User.init({
   // Attributes
@@ -11,7 +17,7 @@ User.init({
     allowNull: false,
     validate: {
       len: [2, 64],
-      is: /[a-zA-ZáéíóúÁÉÍÓÚñ ]+/g
+      is: /[a-zA-ZáéíóúÁÉÍÓÚñ ]+/
     }
   },
   lastname: {
@@ -19,7 +25,7 @@ User.init({
     allowNull: false,
     validate: {
       len: [2, 64],
-      is: /[a-zA-ZáéíóúÁÉÍÓÚñ ]+/g
+      is: /[a-zA-ZáéíóúÁÉÍÓÚñ ]+/
     }
   },
   email: {
@@ -35,7 +41,7 @@ User.init({
   },
   salt: {
     type: DataTypes.STRING,
-    allowNull: true,
+    allowNull: false,
   },
   password: {
     type: DataTypes.STRING,
@@ -44,19 +50,15 @@ User.init({
       len: [8, 255],
     },
     set(password) {
-      const hash = createHash("sha256");
-      hash.update(password + this.salt);
-      this.setDataValue("password", hash.digest("hex"));
+      const [encryptedPassword, salt] = encryptPassword(password);
+      this.setDataValue("salt", salt);
+      this.setDataValue("password", encryptedPassword);
     }
   }
 }, {
   // Options
   sequelize,
   tableName: "Users"
-});
-
-User.beforeCreate(async (user, options) => {
-  user.salt = randomBytes(16).toString("hex");
 });
 
 export default User;
