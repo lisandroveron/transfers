@@ -26,16 +26,21 @@ export default function Login() {
         <input
             id="login__email"
             type="text"
+            pattern="[a-zA-Z0-9.]+@(hotmail|outlook|live|gmail).com(.ar)?"
+            minLength="10"
+            maxLength="64"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required />
+            required
+            onChange={(e) => setEmail(e.target.value)} />
         <label htmlFor="login__password">Contraseña</label>
         <input
             id="login__password"
             type="password"
+            minLength="8"
+            maxLength="255"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required />
+            required
+            onChange={(e) => setPassword(e.target.value)} />
         <button>Iniciar sesión</button>
       </form>
       <p>¿Aún no te has registrado?</p>
