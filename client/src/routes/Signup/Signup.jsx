@@ -1,10 +1,13 @@
 import {useState} from "react";
+import {useNavigate, Link} from "react-router-dom";
 
 export default function Signup() {
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -24,10 +27,18 @@ export default function Signup() {
         email: email,
         password: password
       })
-    });
+    })
+      .then(response => {
+        if (response.ok) {
+          navigate("/account/login");
+        };
+        return response.text();
+      })
+      .then(msg => alert(msg));
   };
 
   return (<>
+    <Link to="/">Inicio</Link>
     <form onSubmit={handleSubmit}>
       <label htmlFor="signup__firstname">Nombres</label>
       <input
