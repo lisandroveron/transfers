@@ -1,9 +1,14 @@
-import {useState} from "react";
-import {Link} from "react-router-dom";
+import {useContext, useState} from "react";
+import {useNavigate, Link, Navigate} from "react-router-dom";
+// Context
+import {UserContext} from "../../context/UserContext.jsx";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const {userStatus, changeUserStatus} = useContext(UserContext);
+
+  const navigate = useNavigate();
 
   const handleOnSubmit = (e) => {
     e.preventDefault();
@@ -15,11 +20,29 @@ export default function Login() {
         email: email,
         password: password
       })
-    });
+    })
+      .then(async (response) => {
+        return {
+          authenticated: response.ok,
+          body: response.ok ? await response.json() : await response.text()
+        };
+      })
+      .then(({authenticated, body}) => {
+        if (authenticated) {
+          changeUserStatus({
+            isLogged: true,
+            name: body.firstname + " " + body.lastname
+          });
+          navigate("/account");
+        } else {
+          alert(body);
+        };
+      });
   };
 
   return (
     <>
+      {userStatus.isLogged ? <Navigate to="/account" /> : null}
       <Link to={"/"}>Inicio</Link>
       <form onSubmit={handleOnSubmit}>
         <label htmlFor="login__email">Correo electrónico</label>
