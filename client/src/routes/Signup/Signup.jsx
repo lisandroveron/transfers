@@ -28,15 +28,15 @@ export default function Signup() {
         password: password
       })
     })
-      .then(async response => {
+      .then(async (response) => {
         return {
-          authenticated: response.ok,
-          msg: await response.text()
+          registered: response.ok,
+          body: await response.text()
         };
       })
-      .then(({authenticated, msg}) => {
-        if (authenticated) {
-          alert(msg);
+      .then(({registered, body}) => {
+        if (registered) {
+          alert(body);
           navigate("/account/login");
         };
       });
