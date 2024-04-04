@@ -12,7 +12,7 @@ export function createSignature() {
   return hash.digest("hex");
 };
 
-export function encryptPassword(password, salt) {
+export function saltPassword(password, salt) {
   if (!salt) {
     salt = randomBytes(16).toString("hex");
   };
