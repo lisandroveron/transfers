@@ -6,7 +6,7 @@ import User from "./models/User.js";
     await sequelize.authenticate();
     console.log("Connected to the database.");
     
-    await sequelize.sync({force: true, match: /_test$/});
+    await sequelize.sync({alter: true, match: /_test$/});
     console.log("Models synchronized successful.");
   } catch (error) {
     console.error("Could not connect to the database:", error);

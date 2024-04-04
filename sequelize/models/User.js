@@ -1,12 +1,25 @@
 import {randomBytes} from "crypto";
 import {DataTypes, Model} from "sequelize";
 import sequelize from "../config.js";
-import {encryptPassword} from "../../utils.js";
+import {saltPassword} from "../../utils.js";
 
 class User extends Model {
   authenticate(password) {
-    const [encryptedPassword] = encryptPassword(password, this.salt);
-    return this.password === encryptedPassword;
+    const [saltedPassword] = saltPassword(password, this.salt);
+    return this.password === saltedPassword;
+  };
+
+  createSessionId() {
+    const id = randomBytes(32).toString("hex");
+    this.setDataValue("sessionId", id);
+    this.save();
+    return id;
+  };
+
+  getAccountInfo() {
+    return {
+      name: this.firstname + " " + this.lastname
+    };
   };
 };
 
@@ -50,10 +63,13 @@ User.init({
       len: [8, 255],
     },
     set(password) {
-      const [encryptedPassword, salt] = encryptPassword(password);
+      const [saltedPassword, salt] = saltPassword(password);
       this.setDataValue("salt", salt);
-      this.setDataValue("password", encryptedPassword);
+      this.setDataValue("password", saltedPassword);
     }
+  },
+  sessionId: {
+    type: DataTypes.STRING(64),
   }
 }, {
   // Options

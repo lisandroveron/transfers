@@ -33,8 +33,14 @@ export async function login(req, res) {
     return res.status(400).send(msg[400].invalidLogin);
   };
 
-  res.status(200).send(JSON.stringify({
-    firstname: user.firstname,
-    lastname: user.lastname,
-  }));
+  req.secret = process.env.COOKIE_SECRET;
+
+  res.cookie(process.env.COOKIE_NAME, user.createSessionId(), {
+    maxAge: 1000 * 60 * 60 * 24,
+    sameSite: "strict",
+    secure: "auto",
+    signed: true
+  });
+
+  res.status(200).send(JSON.stringify(user.getAccountInfo()));
 };
