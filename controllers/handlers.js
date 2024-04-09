@@ -20,7 +20,7 @@ export async function signup(req, res) {
   if (!user) {
     res.status(400).send(msg[400].userAlreadyExists);
   } else {
-    res.status(200).send(msg[200].successfulRegistered);
+    res.status(201).send(msg[201].successfulRegistered);
   };
 };
 
@@ -43,4 +43,22 @@ export async function login(req, res) {
   });
 
   res.status(200).send(JSON.stringify(user.getAccountInfo()));
+};
+
+export function status(req, res) {
+  /*
+   * This function is intended to provide a response that mirrors the state
+   * structure of the client context, specifically the UserContext used in the
+   * React application.
+   */
+  if (!req.user) {
+    return res.status(100).send();
+  };
+
+  const user = {
+    isLogged: true,
+    ...req.user.getAccountInfo()
+  };
+
+  res.status(200).send(JSON.stringify(user));
 };

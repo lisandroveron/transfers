@@ -1,5 +1,5 @@
 const msg = {
-  200: {
+  201: {
     successfulRegistered: "Registrado con éxito."
   },
   400: {
