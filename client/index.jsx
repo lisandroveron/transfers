@@ -7,6 +7,7 @@ import Error from "./src/routes/Error/Error.jsx";
 import Home from "./src/routes/Home/Home.jsx";
 import Login from "./src/routes/Login/Login.jsx";
 import Signup from "./src/routes/Signup/Signup.jsx";
+import GetStatus from "./src/components/GetStatus/GetStatus.jsx";
 
 import {UserProvider} from "./src/context/UserContext.jsx";
 
@@ -35,6 +36,7 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <UserProvider>
+      <GetStatus />
       <RouterProvider router={router} />
     </UserProvider>
   </React.StrictMode>

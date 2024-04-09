@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import path from "path";
-import {login, signup} from "./controllers/handlers.js";
+import {login, signup, status} from "./controllers/handlers.js";
 import {session} from "./controllers/middlewares.js";
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
@@ -15,5 +15,6 @@ app
 
 app.post("/api/auth/signup", signup);
 app.post("/api/auth/login", login);
+app.post("/api/auth/status", status);
 
 app.listen(process.env.PORT);
