@@ -1,23 +1,17 @@
 import {useContext, useEffect} from "react";
 import {UserContext} from "../../context/UserContext.jsx";
 
-export default function GetStatus() {
+export default function GetStatus({setIsLoading}) {
   const {changeUserStatus} = useContext(UserContext);
 
   useEffect(() => {
-    fetch("/api/auth/status", {
-      method: "POST"
-    })
-      .then(async response => {
-        return {
-          authenticated: response.ok,
-          status: response.ok ? await response.json() : null
-        };
+    fetch("/api/auth/status", {method: "POST",})
+      .then(async (response) => {
+        return response.status === 200 ? await response.json() : {};
       })
-      .then(({authenticated, status}) => {
-        if (authenticated) {
-          changeUserStatus(status);
-        };
+      .then((status) => {
+        changeUserStatus(status);
+        setIsLoading(false);
       });
   }, []);
 };

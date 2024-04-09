@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import { createRoot } from "react-dom/client";
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 
@@ -35,9 +35,19 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <UserProvider>
-      <GetStatus />
-      <RouterProvider router={router} />
-    </UserProvider>
+    <App />
   </React.StrictMode>
 );
+
+function App() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  return (
+    <>
+      <UserProvider>
+        <GetStatus setIsLoading={setIsLoading} />
+        {isLoading ? <p>Cargando...</p> : <RouterProvider router={router} />}
+      </UserProvider>
+    </>
+  );
+};

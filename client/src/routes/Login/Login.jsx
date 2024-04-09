@@ -33,7 +33,7 @@ export default function Login() {
             isLogged: true,
             name: body.name
           });
-          navigate("/account");
+          navigate("/");
         } else {
           alert(body);
         };
