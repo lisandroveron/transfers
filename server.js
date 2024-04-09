@@ -13,8 +13,8 @@ app
   .use(express.json())
   .use(session);
 
-app.post("/api/auth/signup", signup);
 app.post("/api/auth/login", login);
+app.post("/api/auth/signup", signup);
 app.post("/api/auth/status", status);
 
 app.listen(process.env.PORT);
