@@ -38,6 +38,8 @@ export default function Signup() {
         if (registered) {
           alert(body);
           navigate("/account/login");
+        } else {
+          alert(body);
         };
       });
   };

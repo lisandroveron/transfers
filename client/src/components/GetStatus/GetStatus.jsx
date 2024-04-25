@@ -5,7 +5,7 @@ export default function GetStatus({setIsLoading}) {
   const {changeUserStatus} = useContext(UserContext);
 
   useEffect(() => {
-    fetch("/api/auth/status", {method: "POST",})
+    fetch("/api/auth/status")
       .then(async (response) => {
         return response.status === 200 ? await response.json() : {};
       })

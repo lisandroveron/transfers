@@ -23,3 +23,18 @@ export function saltPassword(password, salt) {
 
   return [hash.digest("hex"), salt];
 };
+
+export function signedFetch(url) {
+  return fetch(process.env.API_URL + url, {
+    headers: {
+      "Content-Type": "application/json",
+      "Api-key": process.env.API_KEY,
+      "X-Signature": () => createSignature
+    }
+  }).then((response) => {
+    if (response.status === 204) {
+      return null;
+    };
+    return response.json();
+  });
+};

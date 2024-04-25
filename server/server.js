@@ -1,7 +1,15 @@
 import express from "express";
 import cors from "cors";
 import path from "path";
-import {login, signup, status} from "./controllers/handlers.js";
+import {
+  countries,
+  hotels,
+  login,
+  search,
+  signup,
+  status,
+  terminals
+} from "./controllers/handlers.js";
 import {session} from "./controllers/middlewares.js";
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
@@ -15,6 +23,10 @@ app
 
 app.post("/api/auth/login", login);
 app.post("/api/auth/signup", signup);
-app.post("/api/auth/status", status);
+app.get("/api/auth/status", status);
+app.get("/api/hotelbeds/cache/countries", countries);
+app.get("/api/hotelbeds/cache/hotels", hotels);
+app.get("/api/hotelbeds/cache/terminals", terminals);
+app.post("/api/search", search);
 
 app.listen(process.env.PORT);
