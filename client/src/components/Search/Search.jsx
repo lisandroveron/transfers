@@ -5,7 +5,7 @@ export default function Search() {
     countryCode: "ES",
     hotel: "",
     terminal: "",
-    outbound: null,
+    outbound: new Date().toISOString(),
     adults: 1,
     children: 0,
     infants: 0
@@ -19,6 +19,39 @@ export default function Search() {
   const [isLastHotelPage, setIsLastHotelPage] = useState(false);
   const [isFromTerminalToHotel, setIsFromTerminalToHotel] = useState(true);
 
+  const fetchOption = (url, option) => {
+    fetch(url)
+      .then(async (response) => {
+        if(!response.ok) {
+          throw new Error(response.statusText + await response.text());
+        };
+
+        if (response.status === 204) {
+          setIsLastHotelPage(true);
+          throw new Error(response.statusText);
+        };
+
+        setIsLastHotelPage(false);
+        return await response.json();
+      })
+      .then((data) => {
+        switch (option) {
+          case "countries":
+            updateState(setSelectOptions, {countries: data}); break;
+          case "hotels":
+            updateState(setSelectOptions, {hotels: data});
+            updateState(setSearchParameters, {hotel: data[0].code});
+            break;
+          case "terminals":
+            updateState(setSelectOptions, {terminals: data});
+            updateState(setSearchParameters, {terminal: data[0].code});
+            break;
+          default: break;
+        };
+      })
+      .catch((error) => console.error(error.message));
+  };
+
   const updateState = (setFunction, options) => {
     setFunction((prevState) => ({
       ...prevState,
@@ -26,52 +59,41 @@ export default function Search() {
     }));
   };
 
-  useEffect(() => {
-    fetch("/api/hotelbeds/cache/countries")
-      .then(async (response) => {
-        if (!response.ok) throw new Error(await response.text());
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-        return await response.json();
+    fetch("/api/search", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        ...searchParameters,
+        from: isFromTerminalToHotel ? "IATA" : "ATLAS"
       })
-      .then((countries) => {
-        updateState(setSelectOptions, {countries: countries});
-      })
-      .catch((error) => console.error("Error:", error.message));
+    })
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+      .catch((error) => console.error(error));
+  };
+
+  useEffect(() => {
+    fetchOption("/api/hotelbeds/cache/countries", "countries");
   }, []);
 
   useEffect(() => {
-    fetch(
+    const url =
         `/api/hotelbeds/cache/hotels` +
         `?countryCode=${searchParameters.countryCode}` +
-        `&currentPage=${currentHotelPage}`
-    )
-      .then(async (response) => {
-        if (response.status < 200 || response.status > 299) {
-          throw new Error(response.statusText);
-        } else if (response.status === 204) {
-          setIsLastHotelPage(true);
-        };
+        `&currentPage=${currentHotelPage}`;
 
-        return await response.json();
-      })
-      .then((hotels) => updateState(setSelectOptions, {hotels: hotels}))
-      .catch((error) => console.error("Error:", error.message));
+    fetchOption(url, "hotels");
   }, [currentHotelPage, searchParameters.countryCode]);
 
   useEffect(() => {
-    fetch(
+    const url =
         `/api/hotelbeds/cache/terminals` +
-        `?countryCode=${searchParameters.countryCode}`
-    )
-      .then(async (response) => {
-        if (response.status !== 200) throw new Error(response.statusText);
+        `?countryCode=${searchParameters.countryCode}`;
 
-        return await response.json();
-      })
-      .then((terminals) => {
-        updateState(setSelectOptions, {terminals: terminals});
-      })
-      .catch((error) => console.error("Error:", error.message));
+    fetchOption(url, "terminals");
   }, [searchParameters.countryCode]);
 
   const Hotel = () => {
@@ -144,7 +166,7 @@ export default function Search() {
 
   return (
     <>
-      <form>
+      <form onSubmit={handleSubmit}>
         <label htmlFor="countryCode">País:</label>
         <select
             id="countryCode"
@@ -207,6 +229,8 @@ export default function Search() {
             onChange={(e) => {
               updateState(setSearchParameters, {infants: e.target.value});
             }} />
+
+        <button>Buscar</button>
       </form>
     </>
   );
