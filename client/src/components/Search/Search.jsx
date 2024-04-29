@@ -6,7 +6,7 @@ export default function Search() {
     hotel: "",
     terminal: "",
     outbound: null,
-    adults: 0,
+    adults: 1,
     children: 0,
     infants: 0
   });
@@ -16,7 +16,8 @@ export default function Search() {
     terminals: []
   });
   const [currentHotelPage, setCurrentHotelPage] = useState(1);
-  const [fromTerminalToHotel, setFromTerminalToHotel] = useState(true);
+  const [isLastHotelPage, setIsLastHotelPage] = useState(false);
+  const [isFromTerminalToHotel, setIsFromTerminalToHotel] = useState(true);
 
   const updateState = (setFunction, options) => {
     setFunction((prevState) => ({
@@ -32,7 +33,9 @@ export default function Search() {
 
         return await response.json();
       })
-      .then((countries) => updateState(setSelectOptions, {countries: countries}))
+      .then((countries) => {
+        updateState(setSelectOptions, {countries: countries});
+      })
       .catch((error) => console.error("Error:", error.message));
   }, []);
 
@@ -45,6 +48,8 @@ export default function Search() {
       .then(async (response) => {
         if (response.status < 200 || response.status > 299) {
           throw new Error(response.statusText);
+        } else if (response.status === 204) {
+          setIsLastHotelPage(true);
         };
 
         return await response.json();
@@ -63,7 +68,9 @@ export default function Search() {
 
         return await response.json();
       })
-      .then((terminals) => updateState(setSelectOptions, {terminals: terminals}))
+      .then((terminals) => {
+        updateState(setSelectOptions, {terminals: terminals});
+      })
       .catch((error) => console.error("Error:", error.message));
   }, [searchParameters.countryCode]);
 
@@ -76,14 +83,40 @@ export default function Search() {
             value={searchParameters.hotel}
             required
             onChange={(e) => {
-              updateState(setSearchParameters, {hotel: e.target.value});
+              switch (e.target.value) {
+                case "prev":
+                  setCurrentHotelPage((prevState) => prevState - 1); break;
+                case "next":
+                  setCurrentHotelPage((prevState) => prevState + 1); break;
+                default:
+                  updateState(setSearchParameters, {hotel: e.target.value});
+                  break;
+              };
             }}>
           {selectOptions.hotels.map((hotel) => (
             <option key={`hotel-${hotel.code}`} value={hotel.code}>
               {hotel.name}
             </option>
           ))}
+          <option value="prev" disabled={currentHotelPage === 1}>
+            Anterior
+          </option>
+          <option value="next" disabled={isLastHotelPage}>
+            Siguiente
+          </option>
         </select>
+      </>
+    );
+  };
+
+  const Swap = () => {
+    const handleClick = () => {
+      setIsFromTerminalToHotel((prevState) => !prevState);
+    };
+
+    return (
+      <>
+        <input type="button" value="Cambiar" onClick={handleClick} />
       </>
     );
   };
@@ -111,68 +144,70 @@ export default function Search() {
 
   return (
     <>
-      <label htmlFor="countryCode">País:</label>
-      <select
-          id="countryCode"
-          value={searchParameters.countryCode}
-          required
-          onChange={(e) => {
-            updateState(setSearchParameters, {countryCode: e.target.value});
-          }}>
-        {selectOptions.countries.map((country) => (
-          <option key={`country-${country.code}`} value={country.code}>
-            {country.name}
-          </option>
-        ))}
-      </select>
+      <form>
+        <label htmlFor="countryCode">País:</label>
+        <select
+            id="countryCode"
+            value={searchParameters.countryCode}
+            required
+            onChange={(e) => {
+              updateState(setSearchParameters, {countryCode: e.target.value});
+            }}>
+          {selectOptions.countries.map((country) => (
+            <option key={`country-${country.code}`} value={country.code}>
+              {country.name}
+            </option>
+          ))}
+        </select>
 
-      {fromTerminalToHotel
-        ? <><Terminal /> <Hotel /></>
-        : <><Hotel /> <Terminal /></>
-      }
+        {isFromTerminalToHotel
+          ? <><Terminal /> <Swap /> <Hotel /></>
+          : <><Hotel /> <Swap /> <Terminal /></>
+        }
 
-      <label htmlFor="outbound">Ida:</label>
-      <input
-          id="outbound"
-          type="datetime-local"
-          value={searchParameters.outbound}
-          required
-          onChange={(e) => {
-            updateState(setSearchParameters, {
-              outbound: e.target.value + ":00"
-            });
-          }} />
+        <label htmlFor="outbound">Ida:</label>
+        <input
+            id="outbound"
+            type="datetime-local"
+            value={searchParameters.outbound}
+            required
+            onChange={(e) => {
+              updateState(setSearchParameters, {
+                outbound: e.target.value + ":00"
+              });
+            }} />
 
-      <label htmlFor="adults">Adultos:</label>
-      <input
-          id="adults"
-          type="number"
-          min="0"
-          value={searchParameters.adults}
-          required
-          onChange={(e) => {
-            updateState(setSearchParameters, {adults: e.target.value});
-          }} />
-      <label htmlFor="children">Niños:</label>
-      <input
-          id="children"
-          type="number"
-          min="0"
-          value={searchParameters.children}
-          required
-          onChange={(e) => {
-            updateState(setSearchParameters, {children: e.target.value});
-          }} />
-      <label htmlFor="infants">Infantes:</label>
-      <input
-          id="infants"
-          type="number"
-          min="0"
-          value={searchParameters.infants}
-          required
-          onChange={(e) => {
-            updateState(setSearchParameters, {infants: e.target.value});
-          }} />
+        <label htmlFor="adults">Adultos:</label>
+        <input
+            id="adults"
+            type="number"
+            min="1"
+            value={searchParameters.adults}
+            required
+            onChange={(e) => {
+              updateState(setSearchParameters, {adults: e.target.value});
+            }} />
+        <label htmlFor="children">Niños:</label>
+        <input
+            id="children"
+            type="number"
+            min="0"
+            value={searchParameters.children}
+            required
+            onChange={(e) => {
+              updateState(setSearchParameters, {children: e.target.value});
+            }} />
+        <label htmlFor="infants">Infantes:</label>
+        <input
+            id="infants"
+            type="number"
+            min="0"
+            value={searchParameters.infants}
+            required
+            onChange={(e) => {
+              updateState(setSearchParameters, {infants: e.target.value});
+            }} />
+      </form>
     </>
   );
 };
