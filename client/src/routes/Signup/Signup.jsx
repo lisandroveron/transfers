@@ -5,6 +5,7 @@ export default function Signup() {
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState();
   const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
@@ -25,6 +26,7 @@ export default function Signup() {
         firstname: firstname,
         lastname: lastname,
         email: email,
+        phone: phone,
         password: password
       })
     })
@@ -77,6 +79,11 @@ export default function Signup() {
           value={email}
           required
           onChange={(e) => setEmail(e.target.value)} />
+      <label htmlFor="phone">Teléfono</label>
+      <input
+          type="tel"
+          pattern="\d+"
+          onChange={(e) => setPhone(e.target.value)} />
       <label htmlFor="signup__password">Contraseña</label>
       <input
           id="signup__password"

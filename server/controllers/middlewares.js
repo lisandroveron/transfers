@@ -1,6 +1,5 @@
 import {parse} from "cookie";
 import {unsign} from "cookie-signature";
-import {createHash} from "crypto";
 import User from "../sequelize/models/User.js";
 
 export async function session(req, res, next) {
