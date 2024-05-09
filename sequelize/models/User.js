@@ -52,6 +52,13 @@ User.init({
       isEmail: true
     }
   },
+  phone: {
+    type: DataTypes.BIGINT,
+    allowNull: false,
+    validate: {
+      is: /\d+/
+    }
+  },
   salt: {
     type: DataTypes.STRING,
     allowNull: false,
