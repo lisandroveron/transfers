@@ -62,8 +62,30 @@ export async function login(req, res) {
   res.status(200).json(user.getAccountInfo());
 };
 
-export function search() {
-  
+export async function search(req, res) {
+  res.set("Content-Type", "text/plain");
+
+  const {
+    hotel, terminal, outbound, adults, children, infants, from
+  } = req.body;
+  const to = from === "IATA" ? "ATLAS" : "IATA";
+
+  const url =
+      `/transfer-api/1.0/availability/${LANGUAGE}` +
+      `/from/${from}/${from === "IATA" ? terminal : hotel}` +
+      `/to/${to}/${to === "ATLAS" ? hotel : terminal}` +
+      `/${outbound}` +
+      `/${adults}/${children}/${infants}`;
+
+  const availability = await signedFetch(url);
+
+  if (!availability) {
+    return res.status(204).send();
+  } else if (availability.isBadRequest) {
+    return res.status(400).send(availability.fieldErrors[0].message);
+  };
+
+  res.json(availability.services);
 };
 
 export async function signup(req, res) {

@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 
 export default function Search() {
   const [searchParameters, setSearchParameters] = useState({
@@ -15,6 +15,7 @@ export default function Search() {
     hotels: [],
     terminals: []
   });
+  const [transfers, setTransfers] = useState([]);
   const [currentHotelPage, setCurrentHotelPage] = useState(1);
   const [isLastHotelPage, setIsLastHotelPage] = useState(false);
   const [isFromTerminalToHotel, setIsFromTerminalToHotel] = useState(true);
@@ -70,9 +71,17 @@ export default function Search() {
         from: isFromTerminalToHotel ? "IATA" : "ATLAS"
       })
     })
-      .then((response) => response.json())
-      .then((data) => console.log(data))
-      .catch((error) => console.error(error));
+      .then(async (response) => {
+        if (response.status === 204) return [];
+        if (response.status !== 200) throw new Error(await response.text());
+
+        return await response.json();
+      })
+      .then((transfers) => setTransfers(transfers))
+      .catch((error) => {
+        setTransfers([]);
+        alert(error.message);
+      });
   };
 
   useEffect(() => {
@@ -97,6 +106,18 @@ export default function Search() {
   }, [searchParameters.countryCode]);
 
   const Hotel = () => {
+    const handleChange = (e) => {
+      switch (e.target.value) {
+        case "prev":
+          setCurrentHotelPage((prevState) => prevState - 1); break;
+        case "next":
+          setCurrentHotelPage((prevState) => prevState + 1); break;
+        default:
+          updateState(setSearchParameters, {hotel: e.target.value});
+          break;
+      };
+    };
+
     return (
       <>
         <label htmlFor="hotel">Hotel:</label>
@@ -104,17 +125,7 @@ export default function Search() {
             id="hotel"
             value={searchParameters.hotel}
             required
-            onChange={(e) => {
-              switch (e.target.value) {
-                case "prev":
-                  setCurrentHotelPage((prevState) => prevState - 1); break;
-                case "next":
-                  setCurrentHotelPage((prevState) => prevState + 1); break;
-                default:
-                  updateState(setSearchParameters, {hotel: e.target.value});
-                  break;
-              };
-            }}>
+            onChange={handleChange}>
           {selectOptions.hotels.map((hotel) => (
             <option key={`hotel-${hotel.code}`} value={hotel.code}>
               {hotel.name}
@@ -160,6 +171,39 @@ export default function Search() {
             </option>
           ))}
         </select>
+      </>
+    );
+  };
+
+  const Transfer = ({transfer}) => {
+    const vehicle = {...transfer.content.vehicle};
+    const category = {...transfer.content.category};
+    const price = {...transfer.price};
+    const details = transfer.content.transferDetailInfo;
+    const type = () => {
+      const terminal = selectOptions.terminals.find((terminal) => {
+        terminal.code === searchParameters.terminal;
+      });
+
+      return terminal.content.type;
+    };
+
+    // To Do. Function for booking the selected transfer.
+    const handleClick = () => {};
+
+    return (
+      <>
+        <p>{vehicle.name} de categoría {category.name}</p>
+        <p>{price.totalAmount + " " + price.currencyId}</p>
+        {details.map((detail) => (
+          <React.Fragment key={detail.id}>
+            <p>{detail.description}.</p>
+          </React.Fragment>
+        ))}
+        <input
+            type="button"
+            value="Reservar"
+            onClick={handleClick} />
       </>
     );
   };
@@ -232,6 +276,14 @@ export default function Search() {
 
         <button>Buscar</button>
       </form>
+
+      <h2>Resultados:</h2>
+      {transfers.length
+        ? transfers.map((transfer) => (
+          <Transfer key={transfer.id} transfer={transfer} />
+        ))
+        : <p>Sin resultados.</p>
+      }
     </>
   );
 };
