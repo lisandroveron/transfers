@@ -2,7 +2,9 @@ import express from "express";
 import cors from "cors";
 import path from "path";
 import {
+  confirmation,
   countries,
+  destinations,
   hotels,
   login,
   search,
@@ -24,7 +26,9 @@ app
 app.post("/api/auth/login", login);
 app.post("/api/auth/signup", signup);
 app.get("/api/auth/status", status);
+app.post("/api/hotelbeds/booking/confirmation", confirmation);
 app.get("/api/hotelbeds/cache/countries", countries);
+app.get("/api/hotelbeds/cache/destinations", destinations);
 app.get("/api/hotelbeds/cache/hotels", hotels);
 app.get("/api/hotelbeds/cache/terminals", terminals);
 app.post("/api/search", search);

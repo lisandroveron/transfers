@@ -1,13 +1,94 @@
 import Sequelize from "sequelize";
-import {User} from "../sequelize/init.js";
+import {User, Transfer} from "../sequelize/init.js";
 import fs from "fs";
 import path from "path";
 import msg from "./http_messages.js";
-import {signedFetch} from "../utils.js";
+import {signedFetch, getConfirmationResponse} from "../utils.js";
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 const ITEMS_PER_PAGE = 20;
 const LANGUAGE = "es";
+
+export async function confirmation(req, res) {
+  const transfer = req.body;
+
+  const type = () => {
+    switch (transfer.type) {
+      case "A": return "FLIGHT";
+      case "P": return "CRUISE";
+      case "T": return "TRAIN";
+      default: break;
+    };
+  };
+
+  const request = {
+    language: LANGUAGE,
+    holder: {
+      name: req.user.firstname,
+      surname: req.user.lastname,
+      email: req.user.email,
+      phone: req.user.phone
+    },
+    transfers: {
+      transfer: {
+        rateKey: transfer.rateKey,
+        transferDetails: {
+          transferDetail: {
+            type: type(),
+            direction: transfer.direction,
+            // The API does not provide information about how to obtain the
+            // 'code' attribute.
+            code: "XR1234"
+          }
+        }
+      }
+    }
+  };
+
+  // const confirmation = await signedFetch("/transfer-api/1.0/bookings", request);
+
+  /*
+   * When fetching confirmation from the API with the appropriate data, the 
+   * API returns a server error (Code 500) and fails to deliver a response.
+   * This is the response error:
+   *
+   * {
+   *   code: 'SYSTEM_ERROR',
+   *   message: 'An unexpected error occurred while processing your request.
+   *   Please try again later.',
+   *   description: null,
+   *   serviceName: 'transfer-api',
+   *   isBadRequest: false,
+   *   traceId: '8a96366abb5fe45e',
+   *   fieldErrors: [],
+   *   nestedError: null
+   * }
+   *
+   * For this reason, and as an example, we choose to send a predefined
+   * response to the client as follows:
+  */
+
+  const [reference, confirmed] = getConfirmationResponse(req, transfer);
+
+  try {
+    const [, created] = await Transfer.findOrCreate({
+      where: {reference: reference},
+      defaults: {
+        reference: reference,
+        data: confirmed,
+        UserEmail: req.user.email
+      }
+    });
+
+    if (!created) {
+      return res.status(400).send();
+    };
+
+    res.send();
+  } catch (error) {
+    console.error(error);
+  };
+};
 
 export function countries(req, res) {
   const pathToFile = path.join(__dirname, "cache/countryCodes.json");
@@ -21,12 +102,30 @@ export function countries(req, res) {
   });
 };
 
+export async function destinations(req, res) {
+  const url =
+      `/transfer-cache-api/1.0/locations/destinations` +
+      `?fields=ALL` +
+      `&language=${LANGUAGE}` +
+      `&countryCodes=${req.query.countryCode}`;
+
+  const destinations = await signedFetch(url);
+
+  if (!destinations) {
+    return res.status(204).send();
+  };
+
+  res.json(destinations);
+};
+
 export async function hotels(req, res) {
   const offset = ((req.query.currentPage - 1) * ITEMS_PER_PAGE) + 1;
-  const url = `/transfer-cache-api/1.0/hotels` +
+  const url =
+      `/transfer-cache-api/1.0/hotels` +
       `?fields=code,name` +
       `&language=${LANGUAGE}` +
       `&countryCodes=${req.query.countryCode}` +
+      `&destinationCodes=${req.query.destinationCode}` +
       `&offset=${offset}` +
       `&limit=${ITEMS_PER_PAGE}`;
 
@@ -66,8 +165,9 @@ export async function search(req, res) {
   res.set("Content-Type", "text/plain");
 
   const {
-    hotel, terminal, outbound, adults, children, infants, from
+    hotel, terminal, outbound, adults, children, infants, isFromTerminalToHotel
   } = req.body;
+  const from = isFromTerminalToHotel ? "IATA" : "ATLAS";
   const to = from === "IATA" ? "ATLAS" : "IATA";
 
   const url =
@@ -92,15 +192,15 @@ export async function signup(req, res) {
   res.set("Content-Type", "text/plain");
 
   try {
-    [, created] = await User.findOrCreate({
+    const [, created] = await User.findOrCreate({
       where: {email: req.body.email},
       defaults: req.body
     });
 
     if (!created) {
-      res.status(400).send(msg[400].userAlreadyExists);
+      return res.status(400).send(msg[400].userAlreadyExists);
     } else {
-      res.status(201).send(msg[201].successfulRegistered);
+      return res.status(201).send(msg[201].successfulRegistered);
     };
   } catch (error) {
     console.error("ERROR", error);

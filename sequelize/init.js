@@ -1,5 +1,9 @@
 import sequelize from "./config.js";
 import User from "./models/User.js";
+import Transfer from "./models/Transfer.js";
+
+User.hasMany(Transfer, {onDelete: "CASCADE"});
+Transfer.belongsTo(User);
 
 (async () => {
   try {
@@ -13,4 +17,4 @@ import User from "./models/User.js";
   };
 })();
 
-export {sequelize, User};
+export {sequelize, User, Transfer};
