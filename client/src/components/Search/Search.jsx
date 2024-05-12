@@ -1,8 +1,10 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
+import {UserContext} from "../../context/UserContext.jsx";
 
 export default function Search() {
   const [searchParameters, setSearchParameters] = useState({
     countryCode: "ES",
+    destinationCode: "BCN",
     hotel: "",
     terminal: "",
     outbound: new Date().toISOString(),
@@ -12,6 +14,7 @@ export default function Search() {
   });
   const [selectOptions, setSelectOptions] = useState({
     countries: [],
+    destinations: [],
     hotels: [],
     terminals: []
   });
@@ -19,6 +22,8 @@ export default function Search() {
   const [currentHotelPage, setCurrentHotelPage] = useState(1);
   const [isLastHotelPage, setIsLastHotelPage] = useState(false);
   const [isFromTerminalToHotel, setIsFromTerminalToHotel] = useState(true);
+
+  const {userStatus} = useContext(UserContext);
 
   const fetchOption = (url, option) => {
     fetch(url)
@@ -39,6 +44,12 @@ export default function Search() {
         switch (option) {
           case "countries":
             updateState(setSelectOptions, {countries: data}); break;
+          case "destinations":
+            updateState(setSelectOptions, {destinations: data});
+            updateState(setSearchParameters, {
+              destinationCode: data[0].code
+            });
+            break;
           case "hotels":
             updateState(setSelectOptions, {hotels: data});
             updateState(setSearchParameters, {hotel: data[0].code});
@@ -68,7 +79,7 @@ export default function Search() {
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({
         ...searchParameters,
-        from: isFromTerminalToHotel ? "IATA" : "ATLAS"
+        isFromTerminalToHotel: isFromTerminalToHotel
       })
     })
       .then(async (response) => {
@@ -90,12 +101,25 @@ export default function Search() {
 
   useEffect(() => {
     const url =
+        `/api/hotelbeds/cache/destinations` +
+        `?countryCode=${searchParameters.countryCode}`;
+
+    fetchOption(url, "destinations");
+  }, [searchParameters.countryCode]);
+
+  useEffect(() => {
+    const url =
         `/api/hotelbeds/cache/hotels` +
         `?countryCode=${searchParameters.countryCode}` +
+        `&destinationCode=${searchParameters.destinationCode}` +
         `&currentPage=${currentHotelPage}`;
 
     fetchOption(url, "hotels");
-  }, [currentHotelPage, searchParameters.countryCode]);
+  }, [
+    currentHotelPage,
+    searchParameters.countryCode,
+    searchParameters.destinationCode
+  ]);
 
   useEffect(() => {
     const url =
@@ -176,20 +200,31 @@ export default function Search() {
   };
 
   const Transfer = ({transfer}) => {
+    const [isBooked, setIsBooked] = useState(false);
+
     const vehicle = {...transfer.content.vehicle};
     const category = {...transfer.content.category};
     const price = {...transfer.price};
     const details = transfer.content.transferDetailInfo;
     const type = () => {
-      const terminal = selectOptions.terminals.find((terminal) => {
-        terminal.code === searchParameters.terminal;
-      });
+      const terminal = selectOptions.terminals.find((terminal) => (
+        terminal.code === searchParameters.terminal
+      ));
 
       return terminal.content.type;
     };
 
-    // To Do. Function for booking the selected transfer.
-    const handleClick = () => {};
+    const handleClick = () => {
+      fetch("/api/hotelbeds/booking/confirmation", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          ...transfer,
+          type: type()
+        })
+      })
+        .then((response) => response.ok ? setIsBooked(true) : null);
+    };
 
     return (
       <>
@@ -200,10 +235,13 @@ export default function Search() {
             <p>{detail.description}.</p>
           </React.Fragment>
         ))}
-        <input
-            type="button"
-            value="Reservar"
-            onClick={handleClick} />
+        {!userStatus.isLogged
+          ? <p>Debes iniciar sesión para hacer reservas.</p>
+          : <input
+              type="button"
+              value={!isBooked ? "Reservar" : "Reservado"}
+              onClick={!isBooked ? handleClick : null} />
+        }
       </>
     );
   };
@@ -222,6 +260,22 @@ export default function Search() {
           {selectOptions.countries.map((country) => (
             <option key={`country-${country.code}`} value={country.code}>
               {country.name}
+            </option>
+          ))}
+        </select>
+        <label htmlFor="destinations">Ciudad/Provincia:</label>
+        <select
+            id="destinations"
+            value={searchParameters.destinationCode}
+            required
+            onChange={(e) => {
+              updateState(setSearchParameters, {destinationCode: e.target.value})
+            }}>
+          {selectOptions.destinations.map((destination) => (
+            <option
+                key={`destination-${destination.name}`}
+                value={destination.code}>
+              {destination.name}
             </option>
           ))}
         </select>
@@ -277,7 +331,6 @@ export default function Search() {
         <button>Buscar</button>
       </form>
 
-      <h2>Resultados:</h2>
       {transfers.length
         ? transfers.map((transfer) => (
           <Transfer key={transfer.id} transfer={transfer} />
