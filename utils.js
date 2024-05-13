@@ -24,9 +24,9 @@ export function saltPassword(password, salt) {
   return [hash.digest("hex"), salt];
 };
 
-export function signedFetch(url, body = undefined) {
+export function signedFetch(url, body = undefined, method = "GET") {
   return fetch(process.env.API_URL + url, {
-    method: body ? "POST" : "GET",
+    method: method,
     headers: {
       "Content-Type": "application/json",
       "Api-key": process.env.API_KEY,
