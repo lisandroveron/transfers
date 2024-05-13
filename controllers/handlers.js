@@ -9,8 +9,28 @@ const __dirname = path.dirname(new URL(import.meta.url).pathname);
 const ITEMS_PER_PAGE = 20;
 const LANGUAGE = "es";
 
+export async function bookings(req, res) {
+  const transfers = await req.user.getTransfers();
+  
+  const bookings = transfers.map((transfer) => transfer.data);
+
+  res.json(bookings);
+};
+
 export async function confirmation(req, res) {
-  const transfer = req.body;
+  let transfer = req.body;
+
+  if (!transfer.pickupInformation.date) {
+    const date = transfer.rateKey.match(/\d{4}-\d{2}-\d{2}/)[0];
+
+    transfer.pickupInformation.date = date;
+  };
+
+  if (!transfer.pickupInformation.time) {
+    const time = transfer.rateKey.match(/\d{2}:\d{2}/)[0] + ":00";
+
+    transfer.pickupInformation.time = time;
+  };
 
   const type = () => {
     switch (transfer.type) {
@@ -100,6 +120,18 @@ export function countries(req, res) {
 
     res.json(JSON.parse(countries));
   });
+};
+
+export async function deleteBookings(req, res) {
+  const destroyed = await Transfer.destroy({
+    where: {reference: req.query.reference}
+  });
+
+  if (!destroyed) {
+    return res.status(404).send(msg[404].wasNotCancelled);
+  };
+
+  res.send();
 };
 
 export async function destinations(req, res) {
