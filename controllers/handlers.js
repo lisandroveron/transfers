@@ -65,7 +65,7 @@ export async function confirmation(req, res) {
     }
   };
 
-  // const confirmation = await signedFetch("/transfer-api/1.0/bookings", request);
+  // const confirmation = await signedFetch("/transfer-api/1.0/bookings", request, "POST");
 
   /*
    * When fetching confirmation from the API with the appropriate data, the 
@@ -190,7 +190,7 @@ export async function login(req, res) {
     signed: true
   });
 
-  res.status(200).json(user.getAccountInfo());
+  res.json(user.getAccountInfo());
 };
 
 export async function search(req, res) {
@@ -255,12 +255,10 @@ export function status(req, res) {
     return res.status(204).send();
   };
 
-  const user = {
+  res.json({
     isLogged: true,
-    ...req.user.getAccountInfo()
-  };
-
-  res.status(200).json(user);
+    user: req.user.getAccountInfo()
+  });
 };
 
 export async function terminals(req, res) {
