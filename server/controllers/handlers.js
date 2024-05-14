@@ -9,6 +9,23 @@ const __dirname = path.dirname(new URL(import.meta.url).pathname);
 const ITEMS_PER_PAGE = 20;
 const LANGUAGE = "es";
 
+export async function account(req, res) {
+  Object.keys(req.body).forEach((key) => {
+    !req.body[key] ? delete req.body[key] : null;
+  });
+
+  const [modified, users] = await User.update(req.body, {
+    where: {email: req.user.email},
+    returning: true
+  });
+
+  if (!modified) {
+    return res.status(400).send(msg[400].invalidData);
+  };
+
+  res.json(users[0].getAccountInfo());
+};
+
 export async function bookings(req, res) {
   const transfers = await req.user.getTransfers();
   
