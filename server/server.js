@@ -34,7 +34,7 @@ app.get("/api/hotelbeds/cache/destinations", destinations);
 app.get("/api/hotelbeds/cache/hotels", hotels);
 app.get("/api/hotelbeds/cache/terminals", terminals);
 app.post("/api/search", search);
-app.get("/api/user/bookings", bookings);
 app.delete("/api/user/bookings", deleteBookings);
+app.get("/api/user/bookings", bookings);
 
 app.listen(process.env.PORT);

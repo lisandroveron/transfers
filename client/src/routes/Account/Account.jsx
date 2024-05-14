@@ -5,9 +5,9 @@ import {UserContext} from "../../context/UserContext.jsx";
 export default function Account() {
   const [bookings, setBookings] = useState([]);
 
-  const {userStatus} = useContext(UserContext);
+  const {isLogged, user} = useContext(UserContext).userStatus;
 
-  if (!userStatus.isLogged) {
+  if (!isLogged) {
     return (<Outlet />);
   };
 
@@ -57,7 +57,7 @@ export default function Account() {
     <>
       <Link to={"/"}>Inicio</Link>
       <h2>Cuenta</h2>
-      <h3>{userStatus.name}</h3>
+      <h3>{user.firstname} {user.lastname}</h3>
       <h2>Mis reservas</h2>
       {bookings.map((booking) => (
         <Booking key={`booking-${booking.reference}`} booking={booking} />

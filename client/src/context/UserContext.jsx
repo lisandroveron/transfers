@@ -5,7 +5,7 @@ export const UserContext = createContext();
 export const UserProvider = ({children}) => {
   const [userStatus, setUserStatus] = useState({
     isLogged: false,
-    name: ""
+    user: {}
   });
 
   const changeUserStatus = (newStatus) => setUserStatus((prevData) => ({

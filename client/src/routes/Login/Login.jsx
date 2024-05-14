@@ -31,7 +31,7 @@ export default function Login() {
         if (authenticated) {
           changeUserStatus({
             isLogged: true,
-            name: body.name
+            user: body
           });
           navigate("/");
         } else {

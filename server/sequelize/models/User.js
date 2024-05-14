@@ -18,7 +18,10 @@ class User extends Model {
 
   getAccountInfo() {
     return {
-      name: this.firstname + " " + this.lastname
+      firstname: this.firstname,
+      lastname: this.lastname,
+      email: this.email,
+      phone: this.phone
     };
   };
 };

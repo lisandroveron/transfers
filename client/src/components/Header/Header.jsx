@@ -4,12 +4,12 @@ import {Link} from "react-router-dom";
 import {UserContext} from "../../context/UserContext.jsx";
 
 export default function Header() {
-  const {userStatus} = useContext(UserContext);
+  const {isLogged} = useContext(UserContext).userStatus;
 
   return (
     <header>
       <h1>Transfers</h1>
-      {userStatus.isLogged
+      {isLogged
         ? <Link to={"/account"}>Mi cuenta</Link>
         : <Link to={"/account/login"}>Iniciar sesión</Link>
       }

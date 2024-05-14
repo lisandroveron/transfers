@@ -23,7 +23,7 @@ export default function Search() {
   const [isLastHotelPage, setIsLastHotelPage] = useState(false);
   const [isFromTerminalToHotel, setIsFromTerminalToHotel] = useState(true);
 
-  const {userStatus} = useContext(UserContext);
+  const {isLogged} = useContext(UserContext).userStatus;
 
   const fetchOption = (url, option) => {
     fetch(url)
@@ -235,7 +235,7 @@ export default function Search() {
             <p>{detail.description}.</p>
           </React.Fragment>
         ))}
-        {!userStatus.isLogged
+        {!isLogged
           ? <p>Debes iniciar sesión para hacer reservas.</p>
           : <input
               type="button"
