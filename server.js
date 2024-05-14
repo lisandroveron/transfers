@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import path from "path";
 import {
+  account,
   bookings,
   confirmation,
   countries,
@@ -34,6 +35,7 @@ app.get("/api/hotelbeds/cache/destinations", destinations);
 app.get("/api/hotelbeds/cache/hotels", hotels);
 app.get("/api/hotelbeds/cache/terminals", terminals);
 app.post("/api/search", search);
+app.put("/api/user/account", account);
 app.delete("/api/user/bookings", deleteBookings);
 app.get("/api/user/bookings", bookings);
 
