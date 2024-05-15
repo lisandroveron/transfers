@@ -118,12 +118,14 @@ export async function confirmation(req, res) {
     });
 
     if (!created) {
-      return res.status(400).send();
+      return res.status(409).send();
     };
 
     res.send();
   } catch (error) {
     console.error(error);
+
+    res.status(400).send();
   };
 };
 
