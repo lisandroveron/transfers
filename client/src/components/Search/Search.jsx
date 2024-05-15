@@ -223,7 +223,9 @@ export default function Search() {
           type: type()
         })
       })
-        .then((response) => response.ok ? setIsBooked(true) : null);
+        .then((response) => {
+          response.ok || response.status === 409 ? setIsBooked(true) : null;
+        });
     };
 
     return (
