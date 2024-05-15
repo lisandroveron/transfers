@@ -12,6 +12,11 @@ export default function UserInfoForm({
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    setFirstname(firstname.trim().replace(/\s+/g, " "));
+    setLastname(lastname.trim().replace(/\s+/g, " "));
+    setEmail(email.trim().replace(/\s+/g, " "));
+    setPassword(password.trim());
+
     fetch(url, {
       method: method,
       headers: {"Content-Type": "application/json"},
@@ -40,9 +45,7 @@ export default function UserInfoForm({
             maxLength="64"
             value={firstname}
             required={required}
-            onChange={(e) => {
-              setFirstname(e.target.value.trim().replace(/\s+/g, " "));
-            }} />
+            onChange={(e) => setFirstname(e.target.value)} />
         <label htmlFor="userinfoform__lastname">Apellidos</label>
         <input
             id="userinfoform__lastname"
@@ -52,9 +55,7 @@ export default function UserInfoForm({
             maxLength="64"
             value={lastname}
             required={required}
-            onChange={(e) => {
-              setLastname(e.target.value.trim().replace(/\s+/g, " "));
-            }} />
+            onChange={(e) => setLastname(e.target.value)} />
         <label htmlFor="userinfoform__email">Correo electrónico</label>
         <input
             id="userinfoform__email"
@@ -64,9 +65,7 @@ export default function UserInfoForm({
             maxLength="64"
             value={email}
             required={required}
-            onChange={(e) => {
-              setEmail(e.target.value.trim().replace(/\s+/g, " "));
-            }} />
+            onChange={(e) => setEmail(e.target.value)} />
         <label htmlFor="userinfoform__phone">Teléfono</label>
         <input
             id="userinfoform__phone"
@@ -82,7 +81,7 @@ export default function UserInfoForm({
             maxLength="255"
             value={password}
             required={required}
-            onChange={(e) => setPassword(e.target.value.trim())} />
+            onChange={(e) => setPassword(e.target.value)} />
         <button>{buttonText}</button>
       </form>
     </>
