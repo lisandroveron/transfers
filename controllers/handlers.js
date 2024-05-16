@@ -1,9 +1,8 @@
 import Sequelize from "sequelize";
 import {User, Transfer} from "../sequelize/init.js";
-import fs from "fs";
 import path from "path";
 import msg from "./http_messages.js";
-import {signedFetch, getConfirmationResponse} from "../utils.js";
+import {parseJSONFile, signedFetch, getConfirmationResponse} from "../utils.js";
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 const ITEMS_PER_PAGE = 20;
@@ -32,6 +31,28 @@ export async function bookings(req, res) {
   const bookings = transfers.map((transfer) => transfer.data);
 
   res.json(bookings);
+};
+
+export function categories(req, res) {
+  const pathToFile = path.join(__dirname, "cache/categories.json");
+
+  try {
+    const file = parseJSONFile(pathToFile);
+
+    const uniqueNames = new Set();
+
+    file.forEach((category) => uniqueNames.add(category.name));
+
+    const categories = [];
+
+    uniqueNames.forEach((name) => categories.push({name: name}));
+
+    res.json(categories);
+  } catch (error) {
+    console.error("Error reading file: ", error);
+
+    res.status(500).send(msg[500].cantReadResource);
+  };
 };
 
 export async function confirmation(req, res) {
@@ -131,14 +152,16 @@ export async function confirmation(req, res) {
 
 export function countries(req, res) {
   const pathToFile = path.join(__dirname, "cache/countryCodes.json");
-  fs.readFile(pathToFile, (error, countries) => {
-    if (error) {
-      console.error("Error reading file: ", error);
-      return res.status(500).send(msg[500].cantReadResource);
-    };
+  
+  try {
+    const countries = parseJSONFile(pathToFile);
 
-    res.json(JSON.parse(countries));
-  });
+    res.json(countries);
+  } catch (error) {
+    console.error("Error reading file: ", error);
+
+    res.status(500).send(msg[500].cantReadResource);
+  };
 };
 
 export async function deleteBookings(req, res) {
@@ -295,4 +318,40 @@ export async function terminals(req, res) {
   };
 
   res.json(terminals);
+};
+
+export function transferTypes(req, res) {
+  const pathToFile = path.join(__dirname, "cache/transferTypes.json");
+
+  try {
+    const transferTypes = parseJSONFile(pathToFile);
+
+    res.json(transferTypes);
+  } catch (error) {
+    console.error("Error reading file: ", error);
+
+    res.status(500).send(msg[500].cantReadResource);
+  };
+};
+
+export function vehicleTypes(req, res) {
+  const pathToFile = path.join(__dirname, "cache/vehicleTypes.json");
+
+  try {
+    const file = parseJSONFile(pathToFile);
+
+    const uniqueNames = new Set();
+
+    file.forEach((vehicleType) => uniqueNames.add(vehicleType.name));
+
+    const vehicleTypes = [];
+
+    uniqueNames.forEach((name) => vehicleTypes.push({name: name}));
+
+    res.json(vehicleTypes);
+  } catch (error) {
+    console.error("Error reading file: ", error);
+
+    res.status(500).send(msg[500].cantReadResource);
+  };
 };

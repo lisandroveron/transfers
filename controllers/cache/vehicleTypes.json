@@ -1,0 +1,72 @@
+[
+  {
+    "masterTransferTypeCode": "PRVT",
+    "masterCategoryCode": "PRM",
+    "masterVehicleCode": "CR",
+    "name": "Coche",
+    "description": "Coche"
+  },
+  {
+    "masterTransferTypeCode": "PRVT",
+    "masterCategoryCode": "STND",
+    "masterVehicleCode": "MNBS",
+    "name": "Shuttle",
+    "description": "Shuttle"
+  },
+  {
+    "masterTransferTypeCode": "PRVT",
+    "masterCategoryCode": "STND",
+    "masterVehicleCode": "SUV",
+    "name": "170",
+    "description": "Todoterreno ligero (SUV)"
+  },
+  {
+    "masterTransferTypeCode": "PRVT",
+    "masterCategoryCode": "STND",
+    "masterVehicleCode": "CR",
+    "name": "Coche",
+    "description": "Coche"
+  },
+  {
+    "masterTransferTypeCode": "PRVT",
+    "masterCategoryCode": "PRM",
+    "masterVehicleCode": "MNBS",
+    "name": "Shuttle",
+    "description": "Shuttle"
+  },
+  {
+    "masterTransferTypeCode": "PRVT",
+    "masterCategoryCode": "STND",
+    "masterVehicleCode": "BS",
+    "name": "Autocar",
+    "description": "Autocar"
+  },
+  {
+    "masterTransferTypeCode": "PRVT",
+    "masterCategoryCode": "PRM",
+    "masterVehicleCode": "LMSN",
+    "name": "Limusina",
+    "description": "Limusina"
+  },
+  {
+    "masterTransferTypeCode": "PRVT",
+    "masterCategoryCode": "PRM",
+    "masterVehicleCode": "SUV",
+    "name": "170",
+    "description": "Todoterreno ligero (SUV)"
+  },
+  {
+    "masterTransferTypeCode": "SHRD",
+    "masterCategoryCode": "STND",
+    "masterVehicleCode": "CR",
+    "name": "Coche",
+    "description": "Coche"
+  },
+  {
+    "masterTransferTypeCode": "SHRD",
+    "masterCategoryCode": "STND",
+    "masterVehicleCode": "MNBS",
+    "name": "Shuttle",
+    "description": "Shuttle"
+  }
+]

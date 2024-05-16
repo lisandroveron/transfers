@@ -1,0 +1,17 @@
+[
+  {
+    "code": "SHUTTLE",
+    "name": "Shuttle",
+    "description": "Frecuencias y rutas predeterminadas"
+  },
+  {
+    "code": "SHARED",
+    "name": "Compartido",
+    "description": "Con otros pasajeros"
+  },
+  {
+    "code": "PRIVATE",
+    "name": "Privado",
+    "description": "Servicio privado con conductor"
+  }
+]
