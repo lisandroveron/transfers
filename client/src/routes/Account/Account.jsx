@@ -1,7 +1,9 @@
 import {useContext, useEffect, useState} from "react";
-import {Link, Outlet} from "react-router-dom";
+import {Outlet} from "react-router-dom";
 import {UserContext} from "../../context/UserContext.jsx";
 import UserInfoForm from "../../components/UserInfoForm/UserInfoForm.jsx";
+import Header from "../../components/Header/Header.jsx";
+import Footer from "../../components/Footer/Footer.jsx";
 
 export default function Account() {
   const [bookings, setBookings] = useState([]);
@@ -11,7 +13,13 @@ export default function Account() {
   const {isLogged, user} = userStatus;
 
   if (!isLogged) {
-    return (<Outlet />);
+    return (
+      <>
+        <Header />
+        <Outlet />
+        <Footer />
+      </>
+    );
   };
 
   const handleResponse = async (response) => {
@@ -102,7 +110,7 @@ export default function Account() {
 
   return (
     <>
-      <Link to={"/"}>Inicio</Link>
+      <Header />
       <Info />
       <h2>Mis reservas</h2>
       {bookings.map((booking) => (
@@ -111,6 +119,7 @@ export default function Account() {
             booking={booking}
             setBookings={setBookings} />
       ))}
+      <Footer />
     </>
   );
 };

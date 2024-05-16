@@ -9,10 +9,15 @@ export default function Header() {
   return (
     <header>
       <h1>Transfers</h1>
-      {isLogged
-        ? <Link to={"/account"}>Mi cuenta</Link>
-        : <Link to={"/account/login"}>Iniciar sesión</Link>
-      }
+      <nav>
+        <ul><Link to={"/"}>Inicio</Link></ul>
+        <ul>
+          {isLogged
+            ? <Link to={"/account"}>Mi cuenta</Link>
+            : <Link to={"/account/login"}>Iniciar sesión</Link>
+          }
+        </ul>
+      </nav>
     </header>
   );
 };
