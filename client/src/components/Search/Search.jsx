@@ -74,7 +74,7 @@ export default function Search() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    fetch("/api/search", {
+    fetch("/api/hotelbeds/search", {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({
@@ -202,16 +202,23 @@ export default function Search() {
   const Transfer = ({transfer}) => {
     const [isBooked, setIsBooked] = useState(false);
 
-    const vehicle = {...transfer.content.vehicle};
     const category = {...transfer.content.category};
     const price = {...transfer.price};
     const details = transfer.content.transferDetailInfo;
+    const vehicle = {...transfer.content.vehicle};
     const type = () => {
       const terminal = selectOptions.terminals.find((terminal) => (
         terminal.code === searchParameters.terminal
       ));
 
       return terminal.content.type;
+    };
+    const vehicleType = () => {
+      switch (transfer.transferType) {
+        case "SHARED": return "compartido";
+        case "PRIVATE": return "privado";
+        case "SHUTTLE": return "shuttle";
+      };
     };
 
     const handleClick = () => {
@@ -230,7 +237,7 @@ export default function Search() {
 
     return (
       <>
-        <p>{vehicle.name} de categoría {category.name}</p>
+        <p>{vehicle.name} {vehicleType()} de categoría {category.name}</p>
         <p>{price.totalAmount + " " + price.currencyId}</p>
         {details.map((detail) => (
           <React.Fragment key={detail.id}>
@@ -243,6 +250,181 @@ export default function Search() {
               type="button"
               value={!isBooked ? "Reservar" : "Reservado"}
               onClick={!isBooked ? handleClick : null} />
+        }
+      </>
+    );
+  };
+
+  const Results = () => {
+    if (!transfers.length) {
+      return <p>No hay resultados.</p>;
+    };
+
+    const [filters, setFilters] = useState({
+      vehicleType: "",
+      transferType: "",
+      category: "",
+      minPrice: 0,
+      maxPrice: 0
+    });
+    const [filteredTransfers, setFilteredTransfers] = useState(transfers);
+    const [selectOptions, setSelectOptions] = useState({
+      vehicleTypes: [],
+      transferTypes: [],
+      categories: []
+    });
+
+    const handleFilterChange = (e) => {
+      let {id, value} = e.target;
+
+      setFilters((prevState) => {
+        const newState = {...prevState};
+
+        const isFloat = /\d+(\.{1})?\d*/;
+
+        value = isFloat.test(value) ? parseFloat(value) : value;
+
+        newState[id] = value;
+
+        return newState;
+      });
+    };
+
+    useEffect(() => {
+      fetch("/api/hotelbeds/cache/vehicleTypes")
+        .then(async (response) => {
+          if (!response.ok) throw new Error(await response.text());
+
+          return await response.json();
+        })
+        .then((vehicleTypes) => setSelectOptions((prevState) => ({
+          ...prevState,
+          vehicleTypes: vehicleTypes
+        })))
+        .catch((error) => alert(error));
+
+      fetch("/api/hotelbeds/cache/transferTypes")
+        .then(async (response) => {
+          if (!response.ok) throw new Error(await response.text());
+
+          return await response.json();
+        })
+        .then((transferTypes) => setSelectOptions((prevState) => ({
+          ...prevState,
+          transferTypes: transferTypes
+        })))
+        .catch((error) => alert(error));
+
+      fetch("/api/hotelbeds/cache/categories")
+        .then(async (response) => {
+          if (!response.ok) throw new Error(await response.text());
+
+          return await response.json();
+        })
+        .then((categories) => setSelectOptions((prevState) => ({
+          ...prevState,
+          categories: categories
+        })))
+        .catch((error) => alert(error));
+    }, []);
+
+    useEffect(() => {
+      setFilteredTransfers(transfers.filter((transfer) => {
+        const transferType =
+            !filters.transferType ||
+            transfer.transferType === filters.transferType;
+
+        const vehicleType =
+            !filters.vehicleType ||
+            transfer.vehicle.name === filters.vehicleType;
+
+        const category =
+            !filters.category ||
+            transfer.category.name === filters.category;
+
+        const priceRange = (
+          !filters.minPrice ||
+          transfer.price.totalAmount >= filters.minPrice
+        ) && (
+          !filters.maxPrice ||
+          transfer.price.totalAmount <= filters.maxPrice
+        );
+
+        return transferType && vehicleType && category && priceRange;
+      }));
+    }, [filters]);
+
+    return (
+      <>
+        <h2>Filtrar por:</h2>
+
+        <label htmlFor="vehicleType">Tipo de vehículo:</label>
+        <select
+            id="vehicleType"
+            value={filters.vehicleType}
+            onChange={handleFilterChange}>
+          <option value=""></option>
+          {selectOptions.vehicleTypes.map((vehicleType) => (
+            <option
+                key={`vehicleType-${vehicleType.name}`}
+                value={vehicleType.name}>
+              {vehicleType.name}
+            </option>
+          ))
+          }
+        </select>
+
+        <label htmlFor="transferType">Tipo de servicio:</label>
+        <select
+            id="transferType"
+            value={filters.transferType}
+            onChange={handleFilterChange}>
+          <option value=""></option>
+          {selectOptions.transferTypes.map((transferType) => (
+            <option
+                key={`transferType-${transferType.code}`}
+                value={transferType.code}>
+              {transferType.name}
+            </option>
+          ))
+          }
+        </select>
+
+        <label htmlFor="category">Categoría:</label>
+        <select
+            id="category"
+            value={filters.category}
+            onChange={handleFilterChange}>
+          <option value=""></option>
+          {selectOptions.categories.map((category) => (
+            <option
+                key={`category-${category.name}`}
+                value={category.name}>
+              {category.name}
+            </option>
+          ))
+          }
+        </select>
+
+        <label htmlFor="minPrice">Precio mínimo:</label>
+        <input
+            id="minPrice"
+            type="number"
+            step="0.01"
+            value={filters.minPrice}
+            onChange={handleFilterChange} />
+
+        <label htmlFor="maxPrice">Precio máximo:</label>
+        <input
+            id="maxPrice"
+            type="number"
+            step="0.01"
+            value={filters.maxPrice}
+            onChange={handleFilterChange} />
+
+        {filteredTransfers.map((transfer) => (
+          <Transfer key={transfer.id} transfer={transfer} />
+        ))
         }
       </>
     );
@@ -333,12 +515,7 @@ export default function Search() {
         <button>Buscar</button>
       </form>
 
-      {transfers.length
-        ? transfers.map((transfer) => (
-          <Transfer key={transfer.id} transfer={transfer} />
-        ))
-        : <p>Sin resultados.</p>
-      }
+      <Results />
     </>
   );
 };

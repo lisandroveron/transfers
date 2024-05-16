@@ -1,4 +1,5 @@
 import {createHash, randomBytes} from "crypto";
+import fs from "fs";
 
 export function createSignature() {
   const key = process.env.API_KEY;
@@ -10,6 +11,15 @@ export function createSignature() {
   hash.update(`${key}${secret}${timestamp}`);
   
   return hash.digest("hex");
+};
+
+export function parseJSONFile(pathToFile) {
+  try {
+    const file = fs.readFileSync(pathToFile);
+    return JSON.parse(file);
+  } catch (error) {
+    throw error;
+  };
 };
 
 export function saltPassword(password, salt) {

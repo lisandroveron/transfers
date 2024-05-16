@@ -1,0 +1,20 @@
+[
+  {
+    "masterTransferTypeCode": "PRVT",
+    "masterCategoryCode": "STND",
+    "name": "Estándar",
+    "description": "Tipo de producto Estándar"
+  },
+  {
+    "masterTransferTypeCode": "SHRD",
+    "masterCategoryCode": "STND",
+    "name": "Estándar",
+    "description": "Tipo de producto Estándar"
+  },
+  {
+    "masterTransferTypeCode": "PRVT",
+    "masterCategoryCode": "PRM",
+    "name": "Premium",
+    "description": "Tipo de producto Premium"
+  }
+]
