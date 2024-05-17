@@ -144,7 +144,7 @@ export default function Search() {
 
     return (
       <>
-        <label htmlFor="hotel">Hotel:</label>
+        <label htmlFor="hotel">Hotel</label>
         <select
             id="hotel"
             value={searchParameters.hotel}
@@ -181,7 +181,7 @@ export default function Search() {
   const Terminal = () => {
     return (
       <>
-        <label htmlFor="terminal">Terminal:</label>
+        <label htmlFor="terminal">Terminal</label>
         <select
             id="terminal"
             value={searchParameters.terminal}
@@ -202,10 +202,9 @@ export default function Search() {
   const Transfer = ({transfer}) => {
     const [isBooked, setIsBooked] = useState(false);
 
-    const category = {...transfer.content.category};
+    const {category, transferDetailInfo: details, vehicle} = transfer.content;
     const price = {...transfer.price};
-    const details = transfer.content.transferDetailInfo;
-    const vehicle = {...transfer.content.vehicle};
+
     const type = () => {
       const terminal = selectOptions.terminals.find((terminal) => (
         terminal.code === searchParameters.terminal
@@ -297,10 +296,9 @@ export default function Search() {
 
           return await response.json();
         })
-        .then((vehicleTypes) => setSelectOptions((prevState) => ({
-          ...prevState,
+        .then((vehicleTypes) => updateState(setSelectOptions, {
           vehicleTypes: vehicleTypes
-        })))
+        }))
         .catch((error) => alert(error));
 
       fetch("/api/hotelbeds/cache/transferTypes")
@@ -309,10 +307,9 @@ export default function Search() {
 
           return await response.json();
         })
-        .then((transferTypes) => setSelectOptions((prevState) => ({
-          ...prevState,
+        .then((transferTypes) => updateState(setSelectOptions, {
           transferTypes: transferTypes
-        })))
+        }))
         .catch((error) => alert(error));
 
       fetch("/api/hotelbeds/cache/categories")
@@ -321,10 +318,9 @@ export default function Search() {
 
           return await response.json();
         })
-        .then((categories) => setSelectOptions((prevState) => ({
-          ...prevState,
+        .then((categories) => updateState(setSelectOptions, {
           categories: categories
-        })))
+        }))
         .catch((error) => alert(error));
     }, []);
 
@@ -358,82 +354,84 @@ export default function Search() {
       <>
         <h2>Filtrar por:</h2>
 
-        <label htmlFor="vehicleType">Tipo de vehículo:</label>
-        <select
-            id="vehicleType"
-            value={filters.vehicleType}
-            onChange={handleFilterChange}>
-          <option value=""></option>
-          {selectOptions.vehicleTypes.map((vehicleType) => (
-            <option
-                key={`vehicleType-${vehicleType.name}`}
-                value={vehicleType.name}>
-              {vehicleType.name}
-            </option>
+        <form onSubmit={() => {}}>
+          <label htmlFor="vehicleType">Tipo de vehículo</label>
+          <select
+              id="vehicleType"
+              value={filters.vehicleType}
+              onChange={handleFilterChange}>
+            <option value=""></option>
+            {selectOptions.vehicleTypes.map((vehicleType) => (
+              <option
+                  key={`vehicleType-${vehicleType.name}`}
+                  value={vehicleType.name}>
+                {vehicleType.name}
+              </option>
+            ))
+            }
+          </select>
+
+          <label htmlFor="transferType">Tipo de servicio</label>
+          <select
+              id="transferType"
+              value={filters.transferType}
+              onChange={handleFilterChange}>
+            <option value=""></option>
+            {selectOptions.transferTypes.map((transferType) => (
+              <option
+                  key={`transferType-${transferType.code}`}
+                  value={transferType.code}>
+                {transferType.name}
+              </option>
+            ))
+            }
+          </select>
+
+          <label htmlFor="category">Categoría</label>
+          <select
+              id="category"
+              value={filters.category}
+              onChange={handleFilterChange}>
+            <option value=""></option>
+            {selectOptions.categories.map((category) => (
+              <option
+                  key={`category-${category.name}`}
+                  value={category.name}>
+                {category.name}
+              </option>
+            ))
+            }
+          </select>
+
+          <label htmlFor="minPrice">Precio mínimo</label>
+          <input
+              id="minPrice"
+              type="number"
+              step="0.01"
+              value={filters.minPrice}
+              onChange={handleFilterChange} />
+
+          <label htmlFor="maxPrice">Precio máximo</label>
+          <input
+              id="maxPrice"
+              type="number"
+              step="0.01"
+              value={filters.maxPrice}
+              onChange={handleFilterChange} />
+
+          {filteredTransfers.map((transfer) => (
+            <Transfer key={transfer.id} transfer={transfer} />
           ))
           }
-        </select>
-
-        <label htmlFor="transferType">Tipo de servicio:</label>
-        <select
-            id="transferType"
-            value={filters.transferType}
-            onChange={handleFilterChange}>
-          <option value=""></option>
-          {selectOptions.transferTypes.map((transferType) => (
-            <option
-                key={`transferType-${transferType.code}`}
-                value={transferType.code}>
-              {transferType.name}
-            </option>
-          ))
-          }
-        </select>
-
-        <label htmlFor="category">Categoría:</label>
-        <select
-            id="category"
-            value={filters.category}
-            onChange={handleFilterChange}>
-          <option value=""></option>
-          {selectOptions.categories.map((category) => (
-            <option
-                key={`category-${category.name}`}
-                value={category.name}>
-              {category.name}
-            </option>
-          ))
-          }
-        </select>
-
-        <label htmlFor="minPrice">Precio mínimo:</label>
-        <input
-            id="minPrice"
-            type="number"
-            step="0.01"
-            value={filters.minPrice}
-            onChange={handleFilterChange} />
-
-        <label htmlFor="maxPrice">Precio máximo:</label>
-        <input
-            id="maxPrice"
-            type="number"
-            step="0.01"
-            value={filters.maxPrice}
-            onChange={handleFilterChange} />
-
-        {filteredTransfers.map((transfer) => (
-          <Transfer key={transfer.id} transfer={transfer} />
-        ))
-        }
+        </form>
       </>
     );
   };
 
   return (
-    <>
+    <div id="search">
       <form onSubmit={handleSubmit}>
-        <label htmlFor="countryCode">País:</label>
+        <label htmlFor="countryCode">País</label>
         <select
             id="countryCode"
             value={searchParameters.countryCode}
@@ -447,14 +445,14 @@ export default function Search() {
             </option>
           ))}
         </select>
-        <label htmlFor="destinations">Ciudad/Provincia:</label>
+        <label htmlFor="destinations">Ciudad/Provincia</label>
         <select
             id="destinations"
             value={searchParameters.destinationCode}
             required
-            onChange={(e) => {
-              updateState(setSearchParameters, {destinationCode: e.target.value})
-            }}>
+            onChange={(e) => updateState(setSearchParameters, {
+              destinationCode: e.target.value
+            })}>
           {selectOptions.destinations.map((destination) => (
             <option
                 key={`destination-${destination.name}`}
@@ -469,7 +467,7 @@ export default function Search() {
           : <><Hotel /> <Swap /> <Terminal /></>
         }
 
-        <label htmlFor="outbound">Ida:</label>
+        <label htmlFor="outbound">Fecha de ida</label>
         <input
             id="outbound"
             type="datetime-local"
@@ -481,7 +479,7 @@ export default function Search() {
               });
             }} />
 
-        <label htmlFor="adults">Adultos:</label>
+        <label htmlFor="adults">Adultos</label>
         <input
             id="adults"
             type="number"
@@ -491,7 +489,7 @@ export default function Search() {
             onChange={(e) => {
               updateState(setSearchParameters, {adults: e.target.value});
             }} />
-        <label htmlFor="children">Niños:</label>
+        <label htmlFor="children">Niños</label>
         <input
             id="children"
             type="number"
@@ -501,7 +499,7 @@ export default function Search() {
             onChange={(e) => {
               updateState(setSearchParameters, {children: e.target.value});
             }} />
-        <label htmlFor="infants">Infantes:</label>
+        <label htmlFor="infants">Infantes</label>
         <input
             id="infants"
             type="number"
@@ -516,6 +514,6 @@ export default function Search() {
       </form>
 
       <Results />
-    </>
+    </div>
   );
 };

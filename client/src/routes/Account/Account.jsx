@@ -16,7 +16,9 @@ export default function Account() {
     return (
       <>
         <Header />
-        <Outlet />
+        <div id="account">
+          <Outlet />
+        </div>
         <Footer />
       </>
     );
@@ -111,14 +113,17 @@ export default function Account() {
   return (
     <>
       <Header />
-      <Info />
-      <h2>Mis reservas</h2>
-      {bookings.map((booking) => (
-        <Booking
-            key={`booking-${booking.reference}`}
-            booking={booking}
-            setBookings={setBookings} />
-      ))}
+      <div id="account">
+        <Info />
+        <h2>Mis reservas</h2>
+        {bookings.map((booking) => (
+          <Booking
+              key={`booking-${booking.reference}`}
+              booking={booking}
+              setBookings={setBookings} />
+        ))
+        }
+      </div>
       <Footer />
     </>
   );

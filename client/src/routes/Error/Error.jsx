@@ -5,12 +5,12 @@ export default function Error() {
   console.error(error);
 
   return (
-    <>
+    <div id="error">
       <h1>Ups!</h1>
       <p>Ocurrió un error inesperado</p>
       <p>
         <i>{error.statusText || error.message}</i>
       </p>
-    </>
+    </div>
   );
 };
