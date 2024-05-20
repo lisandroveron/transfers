@@ -1,0 +1,12 @@
+header nav{
+  display: flex;
+  align-items: center;
+}
+
+header nav ul{
+  padding: 0;
+}
+
+header nav ul:last-child{
+  margin-left: auto;
+}

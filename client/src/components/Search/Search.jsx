@@ -1,5 +1,9 @@
-import React, {useContext, useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {UserContext} from "../../context/UserContext.jsx";
+
+import Transfer from "../Transfer/Transfer.jsx";
+
+import "./Search.css";
 
 export default function Search() {
   const [searchParameters, setSearchParameters] = useState({
@@ -73,6 +77,12 @@ export default function Search() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (!isLogged) {
+      return alert(
+        "Necesitas iniciar sesión para buscar transfers disponibles."
+      );
+    };
 
     fetch("/api/hotelbeds/search", {
       method: "POST",
@@ -199,66 +209,8 @@ export default function Search() {
     );
   };
 
-  const Transfer = ({transfer}) => {
-    const [isBooked, setIsBooked] = useState(false);
-
-    const {category, transferDetailInfo: details, vehicle} = transfer.content;
-    const price = {...transfer.price};
-
-    const type = () => {
-      const terminal = selectOptions.terminals.find((terminal) => (
-        terminal.code === searchParameters.terminal
-      ));
-
-      return terminal.content.type;
-    };
-    const vehicleType = () => {
-      switch (transfer.transferType) {
-        case "SHARED": return "compartido";
-        case "PRIVATE": return "privado";
-        case "SHUTTLE": return "shuttle";
-      };
-    };
-
-    const handleClick = () => {
-      fetch("/api/hotelbeds/booking/confirmation", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-          ...transfer,
-          type: type()
-        })
-      })
-        .then((response) => {
-          response.ok || response.status === 409 ? setIsBooked(true) : null;
-        });
-    };
-
-    return (
-      <>
-        <p>{vehicle.name} {vehicleType()} de categoría {category.name}</p>
-        <p>{price.totalAmount + " " + price.currencyId}</p>
-        {details.map((detail) => (
-          <React.Fragment key={detail.id}>
-            <p>{detail.description}.</p>
-          </React.Fragment>
-        ))}
-        {!isLogged
-          ? <p>Debes iniciar sesión para hacer reservas.</p>
-          : <input
-              type="button"
-              value={!isBooked ? "Reservar" : "Reservado"}
-              onClick={!isBooked ? handleClick : null} />
-        }
-      </>
-    );
-  };
-
   const Results = () => {
-    if (!transfers.length) {
-      return <p>No hay resultados.</p>;
-    };
-
+    const [filteredTransfers, setFilteredTransfers] = useState(transfers);
     const [filters, setFilters] = useState({
       vehicleType: "",
       transferType: "",
@@ -266,7 +218,6 @@ export default function Search() {
       minPrice: 0,
       maxPrice: 0
     });
-    const [filteredTransfers, setFilteredTransfers] = useState(transfers);
     const [selectOptions, setSelectOptions] = useState({
       vehicleTypes: [],
       transferTypes: [],
@@ -351,7 +302,7 @@ export default function Search() {
     }, [filters]);
 
     return (
-      <>
+      <div className="results">
         <h2>Filtrar por:</h2>
 
         <form onSubmit={() => {}}>
@@ -407,6 +358,7 @@ export default function Search() {
           <input
               id="minPrice"
               type="number"
+              min="0"
               step="0.01"
               value={filters.minPrice}
               onChange={handleFilterChange} />
@@ -415,21 +367,30 @@ export default function Search() {
           <input
               id="maxPrice"
               type="number"
+              min="0"
               step="0.01"
               value={filters.maxPrice}
               onChange={handleFilterChange} />
+        </form>
 
+        <br />
+
+        {!filteredTransfers.length ? <p>Sin resultados.</p> : null}
+
+        <div className="transferslist">
           {filteredTransfers.map((transfer) => (
             <Transfer key={transfer.id} transfer={transfer} />
           ))
           }
-        </form>
-      </>
+        </div>
+      </div>
     );
   };
 
   return (
-    <div id="search">
+    <div className="search">
+      <h2>Buscar por:</h2>
+      
       <form onSubmit={handleSubmit}>
         <label htmlFor="countryCode">País</label>
         <select
@@ -462,10 +423,14 @@ export default function Search() {
           ))}
         </select>
 
-        {isFromTerminalToHotel
-          ? <><Terminal /> <Swap /> <Hotel /></>
-          : <><Hotel /> <Swap /> <Terminal /></>
-        }
+        <p>
+          {isFromTerminalToHotel ? "De terminal " : "De hotel "}
+          {!isFromTerminalToHotel ? "a terminal " : "a hotel "}
+        </p><Swap />
+
+        <Terminal />
+
+        <Hotel />
 
         <label htmlFor="outbound">Fecha de ida</label>
         <input

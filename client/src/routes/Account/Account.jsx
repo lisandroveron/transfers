@@ -1,9 +1,13 @@
 import {useContext, useEffect, useState} from "react";
 import {Outlet} from "react-router-dom";
 import {UserContext} from "../../context/UserContext.jsx";
+
 import UserInfoForm from "../../components/UserInfoForm/UserInfoForm.jsx";
 import Header from "../../components/Header/Header.jsx";
 import Footer from "../../components/Footer/Footer.jsx";
+import Transfer from "../../components/Transfer/Transfer.jsx";
+
+import "./Account.css";
 
 export default function Account() {
   const [bookings, setBookings] = useState([]);
@@ -16,7 +20,7 @@ export default function Account() {
     return (
       <>
         <Header />
-        <div id="account">
+        <div className="account">
           <Outlet />
         </div>
         <Footer />
@@ -42,12 +46,7 @@ export default function Account() {
   }, []);
 
   const Booking = ({booking}) => {
-    const day = booking.transfers[0].pickupInformation.date;
-    const from = booking.transfers[0].pickupInformation.from.description;
-    const hour = booking.transfers[0].pickupInformation.time;
     const reference = booking.reference;
-    const status = booking.status;
-    const to = booking.transfers[0].pickupInformation.to.description;
 
     const handleClick = () => {
       const confirmDelete = window.confirm(
@@ -68,12 +67,10 @@ export default function Account() {
     };
 
     return (
-      <>
-        <p>Estado: {status}</p>
-        <p>El {day} a las {hour}</p>
-        <p>Desde {from} hasta {to}</p>
-        <input type="button" value="Cancelar" onClick={handleClick} />
-      </>
+      <Transfer
+          transfer={booking.transfers[0]}
+          booked={true}
+          handleCancellationClick={handleClick} />
     );
   };
 
@@ -97,8 +94,7 @@ export default function Account() {
     };
 
     return (
-      <>
-        <h2>Cuenta</h2>
+      <div className="info">
         <p>{user.firstname} {user.lastname}</p>
         <p>{user.email}</p>
         <p>{user.phone}</p>
@@ -106,23 +102,26 @@ export default function Account() {
             type="button"
             value="Editar"
             onClick={() => setIsEditing(true)} />
-      </>
+      </div>
     );
   };
 
   return (
     <>
       <Header />
-      <div id="account">
+      <div className="account">
+        <h2>Cuenta</h2>
         <Info />
         <h2>Mis reservas</h2>
-        {bookings.map((booking) => (
-          <Booking
-              key={`booking-${booking.reference}`}
-              booking={booking}
-              setBookings={setBookings} />
-        ))
-        }
+        <div className="transferslist">
+          {bookings.map((booking) => (
+            <Booking
+                key={`booking-${booking.reference}`}
+                booking={booking}
+                setBookings={setBookings} />
+          ))
+          }
+        </div>
       </div>
       <Footer />
     </>

@@ -6,7 +6,7 @@ class Transfer extends Model {};
 Transfer.init({
   // Attributes
   reference: {
-    type: DataTypes.STRING(64),
+    type: DataTypes.STRING,
     allowNull: false,
     primaryKey: true,
     unique: true

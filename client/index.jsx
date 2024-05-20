@@ -11,6 +11,8 @@ import GetStatus from "./src/components/GetStatus/GetStatus.jsx";
 
 import {UserProvider} from "./src/context/UserContext.jsx";
 
+import "./index.css";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -43,11 +45,9 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
 
   return (
-    <>
-      <UserProvider>
-        <GetStatus setIsLoading={setIsLoading} />
-        {isLoading ? <p>Cargando...</p> : <RouterProvider router={router} />}
-      </UserProvider>
-    </>
+    <UserProvider>
+      <GetStatus setIsLoading={setIsLoading} />
+      {isLoading ? <p>Cargando...</p> : <RouterProvider router={router} />}
+    </UserProvider>
   );
 };

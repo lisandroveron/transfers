@@ -55,8 +55,8 @@ export function signedFetch(url, body = undefined, method = "GET") {
 export function getConfirmationResponse(req, transfer) {
   const creationDate = new Date().toISOString().replace(/\.[0-9]+Z/, "");
   const currency = transfer.cancellationPolicies[0].currencyId;
-  const reference = createHash("sha256").update(transfer.rateKey).digest("hex");
   const totalAmount = transfer.cancellationPolicies[0].amount;
+  const reference = transfer.rateKey;
 
   const type = () => {
     switch (transfer.type) {
@@ -152,5 +152,5 @@ export function getConfirmationResponse(req, transfer) {
     }]
   };
 
-  return [reference, response.bookings[0]];
+  return [response.bookings[0].reference, response.bookings[0]];
 };

@@ -1,0 +1,39 @@
+.transfer{
+  display: grid;
+  grid-template-rows: 220px 1fr;
+  border-radius: var(--spacing);
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(17, 17, 17, .7);
+}
+
+.transfer img{
+  width: 100%;
+  padding: var(--spacing);
+}
+
+.transfer a{
+  cursor: pointer;
+}
+
+.transfer .confirmation{
+  color: greenyellow;
+}
+
+.transfer .cancellation{
+  color: darkorange;
+}
+
+.transfer .transfer__details{
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing);
+  background-color: var(--main-color);
+  color: white;
+  padding: var(--spacing);
+}
+
+.transfer .transfer__details p:first-child{
+  font-weight: bold;
+  font-size: 1.5rem;
+  margin-bottom: var(--spacing);
+}

@@ -1,0 +1,15 @@
+.search{
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing);
+}
+
+.results{
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing);
+}
+
+.results > p{
+  text-align: center;
+}

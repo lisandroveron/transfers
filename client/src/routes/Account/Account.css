@@ -1,0 +1,9 @@
+.account{
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing);
+}
+
+.account .info p{
+  margin: var(--spacing) 0;
+}

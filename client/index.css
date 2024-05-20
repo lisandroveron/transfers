@@ -1,0 +1,63 @@
+:root{
+  --spacing: 10px;
+
+  --main-color: #191932;
+}
+
+body{
+  display: flex;
+  flex-direction: column;
+}
+
+#root{
+  display: flex;
+  flex-direction: column;
+  background-color: var(--main-color);
+  padding: var(--spacing);
+  gap: var(--spacing);
+  flex-grow: 1;
+}
+
+#root > *{
+  border-radius: var(--spacing);
+  padding: var(--spacing);
+  background-color: white;
+}
+
+#root > *:not(:first-child):not(:last-child){
+  flex-grow: 1;
+}
+
+form{
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: var(--spacing);
+}
+
+button{
+  grid-column: 1 / span 2;
+}
+
+a{
+  text-decoration: none;
+  color: dodgerblue;
+}
+
+.transferslist{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 400px);
+  grid-template-rows: repeat(auto-fill, max-content);
+  justify-content: space-evenly;
+  gap: var(--spacing);
+}
+
+@media screen and (max-width: 400px), (orientation: portrait){
+  form{
+    display: flex;
+    flex-direction: column;
+  }
+
+  .transferslist{
+    grid-template-columns: 1fr;
+  }
+}

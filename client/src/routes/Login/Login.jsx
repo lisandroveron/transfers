@@ -13,6 +13,9 @@ export default function Login() {
   const handleOnSubmit = (e) => {
     e.preventDefault();
 
+    setEmail(email.trim().replace(/\s+/g, " "));
+    setPassword(password.trim());
+
     fetch("/api/auth/login", {
       method: "POST",
       headers: {"Content-Type": "application/json"},
@@ -43,12 +46,11 @@ export default function Login() {
   return (
     <>
       {userStatus.isLogged ? <Navigate to="/account" /> : null}
-      <Link to={"/"}>Inicio</Link>
       <form onSubmit={handleOnSubmit}>
         <label htmlFor="login__email">Correo electrónico</label>
         <input
             id="login__email"
-            type="text"
+            type="email"
             pattern="[a-zA-Z0-9.]+@(hotmail|outlook|live|gmail).com(.ar)?"
             minLength="10"
             maxLength="64"

@@ -70,44 +70,45 @@ export async function confirmation(req, res) {
     transfer.pickupInformation.time = time;
   };
 
-  const type = () => {
-    switch (transfer.type) {
-      case "A": return "FLIGHT";
-      case "P": return "CRUISE";
-      case "T": return "TRAIN";
-      default: break;
-    };
-  };
+  // const type = () => {
+  //   switch (transfer.type) {
+  //     case "A": return "FLIGHT";
+  //     case "P": return "CRUISE";
+  //     case "T": return "TRAIN";
+  //     default: break;
+  //   };
+  // };
 
-  const request = {
-    language: LANGUAGE,
-    holder: {
-      name: req.user.firstname,
-      surname: req.user.lastname,
-      email: req.user.email,
-      phone: req.user.phone
-    },
-    transfers: {
-      transfer: {
-        rateKey: transfer.rateKey,
-        transferDetails: {
-          transferDetail: {
-            type: type(),
-            direction: transfer.direction,
-            // The API does not provide information about how to obtain the
-            // 'code' attribute.
-            code: "XR1234"
-          }
-        }
-      }
-    }
-  };
+  // const request = {
+  //   language: LANGUAGE,
+  //   holder: {
+  //     name: req.user.firstname,
+  //     surname: req.user.lastname,
+  //     email: req.user.email,
+  //     phone: req.user.phone
+  //   },
+  //   transfers: {
+  //     transfer: {
+  //       rateKey: transfer.rateKey,
+  //       transferDetails: {
+  //         transferDetail: {
+  //           type: type(),
+  //           direction: transfer.direction,
+  //           // The API does not provide information about how to obtain the
+  //           // 'code' attribute.
+  //           code: "XR1234"
+  //         }
+  //       }
+  //     }
+  //   }
+  // };
 
   // const confirmation = await signedFetch("/transfer-api/1.0/bookings", request, "POST");
 
   /*
-   * When fetching confirmation from the API with the appropriate data, the 
-   * API returns a server error (Code 500) and fails to deliver a response.
+   * The code above is disabled because when fetching confirmation from the API
+   * with the appropriate data, the API returns a server error (Code 500) and
+   * fails to deliver a response.
    * This is the response error:
    *
    * {
