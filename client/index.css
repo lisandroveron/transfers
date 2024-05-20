@@ -51,7 +51,7 @@ a{
   gap: var(--spacing);
 }
 
-@media screen and (max-width: 400px), (orientation: portrait){
+@media screen and (max-width: 400px) and (orientation: portrait){
   form{
     display: flex;
     flex-direction: column;
