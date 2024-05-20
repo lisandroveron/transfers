@@ -29,6 +29,7 @@ app
   .use(express.json())
   .use(session);
 
+app.get("/", (req, res) => res.send("index.html"));
 app.post("/api/auth/login", login);
 app.post("/api/auth/signup", signup);
 app.get("/api/auth/status", status);
