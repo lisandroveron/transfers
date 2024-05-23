@@ -15,6 +15,8 @@ Create an account and start traveling.
 ## For developers
 If you are a developer interested in testing this application locally, you are in the right place! In this section you will find useful information on how to configure the development environment and run the application.
 
+- [Documentation links](https://lisandroveron.github.io/transfers/)
+
 **Important:** The app uses the Hotelbeds API, so you need to create an account in [Hotelbeds](https://developer.hotelbeds.com/) to obtain an API key and API secret.
 
 **Note:** Remember, use `cd` command to move through directories. In Windows, use Git Bash console.
