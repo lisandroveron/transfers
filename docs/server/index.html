@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Home</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Home</h1>
+
+    
+
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article><h1>Transfers</h1>
+<p>The Transfers application is a tool that allows you to search, book and cancel transfers in a simple and convenient way.</p>
+<p>Our advanced search tool allows you to specify a variety of criteria, including country, province and number of passengers (adults, infants and children), to find the transfer options that best suit your specific needs.</p>
+<p>We work with an extensive network of transportation providers to offer a wide variety of transportation options, including private, shared, luxury vehicles and more. You can choose the type of transfer that best suits your preferences and budget.</p>
+<p>Once you find the right option, you can complete the booking process with just a few clicks, thanks to our intuitive and easy-to-use platform.</p>
+<p>Whether you are planning a business trip, a family vacation or any other type of transfer, the Transfers app is your ideal travel companion.</p>
+<p>Create an account and start traveling.</p>
+<h2>For developers</h2>
+<p>If you are a developer interested in testing this application locally, you are in the right place! In this section you will find useful information on how to configure the development environment and run the application.</p>
+<p><strong>Important:</strong> The app uses the Hotelbeds API, so you need to create an account in <a href="https://developer.hotelbeds.com/">Hotelbeds</a> to obtain an API key and API secret.</p>
+<p><strong>Note:</strong> Remember, use <code>cd</code> command to move through directories. In Windows, use Git Bash console.</p>
+<h3>Requisites</h3>
+<ul>
+<li><a href="https://git-scm.com/downloads">Git</a></li>
+<li><a href="https://nodejs.org/en/download">Node</a> (v20 or greater)</li>
+</ul>
+<p>Once Node is installed, verify by running <code>node -v</code> in your terminal (or Git Bash).</p>
+<pre class="prettyprint source lang-bash"><code>$ node -v
+v20.0.0
+</code></pre>
+<p>If it was successfully installed, install Nodemon and Dotenvx:</p>
+<p><code>npm install -g nodemon @dotenvx/dotenvx</code></p>
+<h3>Clone the repository</h3>
+<p><code>git clone https://github.com/lisandroveron/transfers.git &amp;&amp; cd transfers</code></p>
+<p><strong>Note</strong>: In the steps below, you need to open two terminals (or Git Bash). One inside <code>client</code> folder directory, and the another one in <code>server</code> folder.</p>
+<h3>Install dependencies</h3>
+<p>In both folders run: <code>npm i</code></p>
+<h3>Configure environment variables</h3>
+<p>In <code>server</code> folder, create a file with the name <code>.env</code> that will contain the environment variables in the format KEY=VALUE. Write the following variables, replacing them with the appropriate values:</p>
+<pre class="prettyprint source lang-plaintext"><code>API_KEY=your_api_key
+API_SECRET=your_api_secret
+API_URL=https://api.test.hotelbeds.com
+COOKIE_NAME=t_s
+COOKIE_SECRET=Foo Random Value
+DATABASE_URL=postgres://postgres:your_database_password@localhost:your_postgresql_port/transfers_test
+PORT=3000
+</code></pre>
+<h3>Run development servers</h3>
+<p>In <code>client</code> folder run <code>npm run dev -- --host</code></p>
+<p>In <code>server</code> folder run <code>npm run dev</code> (Make sure the database is enabled and running on your system).</p>
+<p>Now you can open the app in the <a href="http://localhost:5173">development server</a>.</p></article>
+    </section>
+
+
+
+
+
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>server.js</h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description">Application entry point.</div>
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="server.js.html">server.js</a>, <a href="server.js.html#line1">line 1</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Middlewares.html">Middlewares</a></li><li><a href="module-Utils.html">Utils</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.3</a> on Thu May 23 2024 01:53:38 GMT-0300 (hora estándar de Argentina)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

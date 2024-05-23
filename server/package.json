@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "dev": "dotenvx run -- nodemon --experimental-modules server.js -e js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docs": "apidoc -c apidoc.json -i ./controllers -f .+\\.js -o ../docs/api ; jsdoc -c jsdoc.json"
   },
   "author": "lisandroveron",
   "license": "GPL-2.0",
@@ -18,6 +19,9 @@
   },
   "type": "module",
   "devDependencies": {
-    "eslint": "^8.56.0"
+    "apidoc": "^1.2.0",
+    "eslint": "^8.56.0",
+    "eslint-plugin-jsdoc": "^48.2.5",
+    "jsdoc": "^4.0.3"
   }
 }

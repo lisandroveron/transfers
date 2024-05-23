@@ -1,0 +1,16 @@
+{
+  "source": {
+    "include": ["./"],
+    "exclude": [
+      "node_modules",
+      "docs",
+      "controllers/handlers.js",
+      "eslint.config.js"
+    ]
+  },
+  "opts": {
+    "destination": "../docs/server",
+    "recurse": true,
+    "readme": "../README.md"
+  }
+}
